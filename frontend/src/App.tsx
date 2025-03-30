@@ -522,6 +522,171 @@ function HomePage() {
         </div>
       </div>
 
+      {/* Key Functionality Highlight */}
+      <div className="max-w-5xl mx-auto mb-20 px-4">
+        <h2 
+          className="text-3xl font-bold mb-12 text-center"
+          style={{ color: colors.deepRed }}
+        >
+          Core Functionality
+        </h2>
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Intelligent Mashup Creator */}
+          <div 
+            className="rounded-2xl p-8 relative overflow-hidden"
+            style={{ 
+              backgroundColor: 'white',
+              border: `1px solid ${colors.brightRed}40`,
+              boxShadow: `0 10px 30px ${colors.brightRed}15`
+            }}
+          >
+            <div 
+              className="absolute -right-16 -top-16 w-40 h-40 rounded-full opacity-10"
+              style={{ background: `radial-gradient(circle, ${colors.brightRed}, transparent)` }}
+            ></div>
+            
+            <div className="flex items-start mb-6">
+              <div 
+                className="w-14 h-14 rounded-lg flex items-center justify-center mr-4 flex-shrink-0"
+                style={{ 
+                  background: `linear-gradient(135deg, ${colors.brightRed}, ${colors.reddishOrange})`,
+                  boxShadow: `0 6px 12px ${colors.brightRed}30`
+                }}
+              >
+                <Brain className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 
+                  className="text-xl font-bold mb-1"
+                  style={{ color: colors.brightRed }}
+                >
+                  Intelligent Mashup Creator
+                </h3>
+                <p className="text-gray-600">Create amazing music transformations with just a prompt</p>
+              </div>
+            </div>
+            
+            <div className="pl-18">
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start">
+                  <span 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                    style={{ backgroundColor: `${colors.brightRed}20` }}
+                  >
+                    <span 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: colors.brightRed }}
+                    ></span>
+                  </span>
+                  <span>Automatically creates mashups from simple text prompts</span>
+                </li>
+                <li className="flex items-start">
+                  <span 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                    style={{ backgroundColor: `${colors.brightRed}20` }}
+                  >
+                    <span 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: colors.brightRed }}
+                    ></span>
+                  </span>
+                  <span>AI understands musical styles, genres, and instruments</span>
+                </li>
+                <li className="flex items-start">
+                  <span 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                    style={{ backgroundColor: `${colors.brightRed}20` }}
+                  >
+                    <span 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: colors.brightRed }}
+                    ></span>
+                  </span>
+                  <span>Generate genre-bending remixes without technical knowledge</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          {/* Batch Processing Mixer */}
+          <div 
+            className="rounded-2xl p-8 relative overflow-hidden"
+            style={{ 
+              backgroundColor: 'white',
+              border: `1px solid ${colors.vibrantYellow}40`,
+              boxShadow: `0 10px 30px ${colors.vibrantYellow}15`
+            }}
+          >
+            <div 
+              className="absolute -right-16 -top-16 w-40 h-40 rounded-full opacity-10"
+              style={{ background: `radial-gradient(circle, ${colors.vibrantYellow}, transparent)` }}
+            ></div>
+            
+            <div className="flex items-start mb-6">
+              <div 
+                className="w-14 h-14 rounded-lg flex items-center justify-center mr-4 flex-shrink-0"
+                style={{ 
+                  background: `linear-gradient(135deg, ${colors.vibrantYellow}, ${colors.softYellow})`,
+                  boxShadow: `0 6px 12px ${colors.vibrantYellow}30`
+                }}
+              >
+                <Music className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 
+                  className="text-xl font-bold mb-1"
+                  style={{ color: colors.vibrantYellow }}
+                >
+                  Batch Processing Mixer
+                </h3>
+                <p className="text-gray-600">Our core technology for processing multiple tracks efficiently</p>
+              </div>
+            </div>
+            
+            <div className="pl-18">
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start">
+                  <span 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                    style={{ backgroundColor: `${colors.vibrantYellow}20` }}
+                  >
+                    <span 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: colors.vibrantYellow }}
+                    ></span>
+                  </span>
+                  <span>Process dozens of tracks simultaneously with exact timestamps</span>
+                </li>
+                <li className="flex items-start">
+                  <span 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                    style={{ backgroundColor: `${colors.vibrantYellow}20` }}
+                  >
+                    <span 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: colors.vibrantYellow }}
+                    ></span>
+                  </span>
+                  <span>Import via CSV for mass processing of audio cuts</span>
+                </li>
+                <li className="flex items-start">
+                  <span 
+                    className="w-5 h-5 rounded-full flex items-center justify-center mr-2 mt-0.5 flex-shrink-0"
+                    style={{ backgroundColor: `${colors.vibrantYellow}20` }}
+                  >
+                    <span 
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: colors.vibrantYellow }}
+                    ></span>
+                  </span>
+                  <span>Save hours of manual editing with our automated workflow</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 mt-16">
         {/* Existing feature cards */}
         <FeatureCard

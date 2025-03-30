@@ -1,0 +1,21 @@
+# Core dependencies
+Flask==2.3.3
+Flask-Cors==4.0.0
+
+# AI and Google API integration
+google-generativeai==0.3.2
+google-api-python-client==2.85.0
+
+# YouTube and video processing
+pytube==15.0.0
+pytubefix==5.2.1
+moviepy==1.0.3
+youtube_dl==2021.12.17
+pydub==0.25.1
+
+
+# Utilities
+requests==2.31.0
+
+# File handling and data processing
+ffmpeg-python==0.2.0
