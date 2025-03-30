@@ -1,33 +1,40 @@
 {
-  "mixTitle": "Wavy Winning Speech Mashup",
+  "mixTitle": "Honey Singh Mashup",
   "songs": [
     {
-      "title": "52 Bars",
-      "artist": "Kanye West",
-      "url": "https://www.youtube.com/watch?v=vBk0P2R5L9g",
-      "startTime": "00:07",
-      "endTime": "01:27"
+      "title": "Brown Rang",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=PMLu_mbbG38",
+      "startTime": "00:55",
+      "endTime": "01:25"
     },
     {
-      "title": "Wavy",
-      "artist": "Ty Dolla $ign ft. Joe Moses",
-      "url": "https://www.youtube.com/watch?v=Z0b4dH-o6t4",
-      "startTime": "00:05",
+      "title": "Blue Eyes",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=2GgjkyH_jNg",
+      "startTime": "00:30",
+      "endTime": "01:05"
+    },
+    {
+      "title": "Lungi Dance",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=Nf1mDhkG2Ys",
+      "startTime": "00:40",
+      "endTime": "01:10"
+    },
+    {
+      "title": "Love Dose",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=j977j_tvsAw",
+      "startTime": "01:05",
+      "endTime": "01:35"
+    },
+    {
+      "title": "Angreji Beat",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=VPnJ_T4nPEw",
+      "startTime": "00:35",
       "endTime": "01:15"
-    },
-    {
-      "title": "Winning Speech",
-      "artist": "JAY-Z",
-      "url": "https://www.youtube.com/watch?v=yW7z9vQo4ek",
-      "startTime": "00:04",
-      "endTime": "01:24"
-    },
-    {
-      "title": "295",
-      "artist": "Sidhu Moose Wala",
-      "url": "https://www.youtube.com/watch?v=lKcR3sQ_3hQ",
-      "startTime": "00:09",
-      "endTime": "01:09"
     }
   ]
 }
