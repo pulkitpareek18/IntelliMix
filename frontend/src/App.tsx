@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Music, Video, FileMusic, Brain } from 'lucide-react';
+import { Music, Video, FileMusic, Brain, DollarSign, Users } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import gsap from 'gsap';
@@ -9,6 +9,8 @@ import YouTubeTrimmer from './pages/YouTubeTrimmer';
 import VideoDownloader from './pages/VideoDownloader';
 import Logo3D from './components/Logo3D';
 import Background3D from './components/Background3D';
+import PricingPage from './pages/Pricing';
+import AboutUsPage from './pages/AboutUs';
 
 // Define vibrant red and yellow color scheme
 const colors = {
@@ -193,6 +195,8 @@ function AppContent() {
               <NavLink to="/ai-parody" icon={<FileMusic />} text="AI Music Studio" />
               <NavLink to="/youtube-trimmer" icon={<Music />} text="Audio Mixer" />
               <NavLink to="/video-downloader" icon={<Video />} text="Media Downloader" />
+              <NavLink to="/pricing" icon={<DollarSign />} text="Pricing" />
+              <NavLink to="/about" icon={<Users />} text="About Us" />
             </div>
           </div>
         </div>
@@ -204,6 +208,8 @@ function AppContent() {
           <Route path="/ai-parody" element={<AIParody />} />
           <Route path="/youtube-trimmer" element={<YouTubeTrimmer />} />
           <Route path="/video-downloader" element={<VideoDownloader />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/about" element={<AboutUsPage />} />
         </Routes>
       </main>
     </div>
