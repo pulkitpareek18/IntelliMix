@@ -1,0 +1,33 @@
+{
+  "mixTitle": "Wavy Winning Speech Mashup",
+  "songs": [
+    {
+      "title": "52 Bars",
+      "artist": "Kanye West",
+      "url": "https://www.youtube.com/watch?v=vBk0P2R5L9g",
+      "startTime": "00:07",
+      "endTime": "01:27"
+    },
+    {
+      "title": "Wavy",
+      "artist": "Ty Dolla $ign ft. Joe Moses",
+      "url": "https://www.youtube.com/watch?v=Z0b4dH-o6t4",
+      "startTime": "00:05",
+      "endTime": "01:15"
+    },
+    {
+      "title": "Winning Speech",
+      "artist": "JAY-Z",
+      "url": "https://www.youtube.com/watch?v=yW7z9vQo4ek",
+      "startTime": "00:04",
+      "endTime": "01:24"
+    },
+    {
+      "title": "295",
+      "artist": "Sidhu Moose Wala",
+      "url": "https://www.youtube.com/watch?v=lKcR3sQ_3hQ",
+      "startTime": "00:09",
+      "endTime": "01:09"
+    }
+  ]
+}
