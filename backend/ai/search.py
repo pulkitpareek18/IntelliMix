@@ -16,8 +16,8 @@ def get_youtube_url(title, artist):
         # Create a search query combining title and artist
         query = f"{title} {artist} official"
         
-        # Create a Search object with use_po_token=True
-        search_results = Search(query, use_po_token=True).results
+        # Create a Search object with client="WEB" instead of use_po_token=True
+        search_results = Search(query, client="WEB").results
         
         # Check if we have any results
         if not search_results:
