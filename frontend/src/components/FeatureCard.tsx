@@ -1,29 +1,152 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+
+// Define color types for better TypeScript support
+interface ColorPalette {
+  brightRed: string;
+  slightlyDarkerRed: string;
+  deepRed: string;
+  reddishOrange: string;
+  vividRed: string;
+  vibrantYellow: string;
+  softYellow: string;
+  paleYellow: string;
+  white: string;
+  black: string;
+  softRed: string;
+  softerRed: string;
+  textDark: string;
+}
+
+// Import colors from a separate file or define them here
+export const colors: ColorPalette = {
+  brightRed: "#f4483a",       // Primary accent
+  slightlyDarkerRed: "#f45444", // Secondary accent
+  deepRed: "#d24d34",         // Emphasis/CTA
+  reddishOrange: "#d14324",   // Highlight
+  vividRed: "#f13521",        // Attention-grabbing
+  vibrantYellow: "#ffb92b",   // Buttons/highlights
+  softYellow: "#f7e5a0",      // Subtle background
+  paleYellow: "#ffe09c",      // Secondary background
+  white: "#FFFFFF",
+  black: "#000000",
+  softRed: "#fee2e1",         // Very light red background
+  softerRed: "#fbeae9",       // Even lighter red for larger areas
+  textDark: "#444444"         // Softer than pure black for text
+};
 
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
   link: string;
+  color: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, link }) => {
+function FeatureCard({ icon, title, description, link, color }: FeatureCardProps) {
+  const cardRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (card) {
+      const handleMouseMove = (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const rotateX = (y - rect.height / 2) / 20;
+        const rotateY = (rect.width / 2 - x) / 20;
+
+        gsap.to(card, {
+          rotateX: rotateX,
+          rotateY: rotateY,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      };
+
+      const handleMouseLeave = () => {
+        gsap.to(card, {
+          rotateX: 0,
+          rotateY: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      };
+
+      card.addEventListener('mousemove', handleMouseMove);
+      card.addEventListener('mouseleave', handleMouseLeave);
+
+      return () => {
+        card.removeEventListener('mousemove', handleMouseMove);
+        card.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, []);
+
+  // Determine the gradient color based on the card's theme color
+  const getGradientColor = () => {
+    // Use the passed color but ensure it's in the red/yellow theme
+    if (color === colors.brightRed) {
+      return `linear-gradient(to bottom right, white, ${colors.brightRed}15)`;
+    } else if (color === colors.vibrantYellow) {
+      return `linear-gradient(to bottom right, white, ${colors.vibrantYellow}15)`;
+    } else if (color === colors.deepRed) {
+      return `linear-gradient(to bottom right, white, ${colors.deepRed}15)`;
+    } else {
+      // Default fallback using the input color
+      return `linear-gradient(to bottom right, white, ${color}15)`;
+    }
+  };
+
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="flex items-center justify-center w-16 h-16 bg-gray-700 rounded-full mb-4">
-        {icon}
-      </div>
-      <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
-      <p className="text-gray-400 mb-4">{description}</p>
-      <Link
-        to={link}
-        className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
+    <Link 
+      ref={cardRef} 
+      to={link} 
+      className="block group rounded-2xl feature-card transform transition-all duration-300 hover:-translate-y-1 perspective-1000"
+    >
+      <div 
+        className="bg-white backdrop-blur-sm rounded-2xl p-8 relative overflow-hidden h-full transition-all duration-300"
+        style={{ 
+          border: `1px solid ${color}30`,
+          boxShadow: `0 0 15px ${color}20`
+        }}
+        onMouseEnter={(e) => {
+          // Use the explicit gradient function to ensure correct colors
+          e.currentTarget.style.background = getGradientColor();
+          e.currentTarget.style.borderColor = `${color}60`;
+          e.currentTarget.style.boxShadow = `0 0 25px ${color}30`;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'white';
+          e.currentTarget.style.borderColor = `${color}30`;
+          e.currentTarget.style.boxShadow = `0 0 15px ${color}20`;
+        }}
       >
-        Learn More →
-      </Link>
-    </div>
+        <div className="relative z-10">
+          <div className="mb-4 transform transition-transform duration-300 ease-out group-hover:scale-110">
+            <div style={{ color: color }} className="transition-colors duration-300">
+              <div className="flex justify-center">
+                {React.cloneElement(icon as React.ReactElement, {
+                  className: "w-12 h-12"
+                })}
+              </div>
+            </div>
+          </div>
+          <h3 
+            className="text-xl font-semibold mb-2 transition-colors duration-300"
+            style={{ color }}
+          >
+            {title}
+          </h3>
+          <p className="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+            {description}
+          </p>
+        </div>
+      </div>
+    </Link>
   );
-};
+}
 
 export default FeatureCard;

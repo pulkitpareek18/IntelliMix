@@ -7,4 +7,6 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  // Enable environment variables
+  envPrefix: 'VITE_',
 });

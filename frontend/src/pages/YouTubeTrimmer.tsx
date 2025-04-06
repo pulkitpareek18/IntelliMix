@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Music, Upload, Clock, Plus, X, Play, Loader, Download, CheckCircle, AlertCircle } from 'lucide-react';
+import { ENDPOINTS } from '../utils/api';
 
 // Define vibrant red and yellow color palette with softer application
 const colors = {
@@ -96,7 +97,7 @@ export default function YouTubeTrimmer() {
       
       console.log("Sending data to process-array endpoint:", formattedData);
       
-      const response = await fetch('http://127.0.0.1:5000/process-array', {
+      const response = await fetch(ENDPOINTS.PROCESS_ARRAY, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +136,7 @@ export default function YouTubeTrimmer() {
       const formData = new FormData();
       formData.append("file", file);
       
-      const response = await fetch('http://127.0.0.1:5000/process-csv', {
+      const response = await fetch(ENDPOINTS.PROCESS_CSV, {
         method: 'POST',
         body: formData,
       });

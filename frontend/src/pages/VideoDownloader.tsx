@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Video, Download, Check, AlertCircle, Loader } from 'lucide-react';
+import { ENDPOINTS } from '../utils/api';
 
 // Define color palette for the red and yellow theme
 const colors = {
@@ -55,8 +56,8 @@ export default function VideoDownloader() {
       
       // Choose the appropriate endpoint based on download type
       const endpoint = downloadType === 'video' 
-        ? 'http://localhost:5000/download-video' 
-        : 'http://localhost:5000/download-audio';
+        ? ENDPOINTS.DOWNLOAD_VIDEO 
+        : ENDPOINTS.DOWNLOAD_AUDIO;
       
       // Make API call to your backend
       const response = await fetch(endpoint, {

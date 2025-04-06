@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Music, Loader, History, Sparkles, Brain, Wand2, Play, Download, AlertCircle } from 'lucide-react';
+import { ENDPOINTS } from '../utils/api';
 
 // Define color palette for easier reference
 const colors = {
@@ -81,7 +82,7 @@ export default function AIParody() {
     try {
       console.log("Sending request to generate AI audio with prompt:", prompt);
       
-      const response = await fetch('http://localhost:5000/generate-ai', {
+      const response = await fetch(ENDPOINTS.GENERATE_AI, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
