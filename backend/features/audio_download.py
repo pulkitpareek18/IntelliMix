@@ -2,8 +2,7 @@ from pytubefix import YouTube
 from pytubefix.cli import on_progress
 
 def download_audio(url, name="", output_dir="temp/"):
-    # Use client="WEB" instead of use_po_token=True
-    yt = YouTube(url, on_progress_callback=on_progress, client="WEB")
+    yt = YouTube(url, on_progress_callback=on_progress)
     print(yt.title)
     if name == "":
         name = yt.title

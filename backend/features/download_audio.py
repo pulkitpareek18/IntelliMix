@@ -20,8 +20,7 @@ def download_highest_quality_audio(url, path):
         def progress_callback(stream, data_chunk, bytes_remaining):
             pbar.update(len(data_chunk) // 10 ** 6)
 
-        # Use client="WEB" instead of use_po_token=True
-        yt = YouTube(url, client="WEB")
+        yt = YouTube(url)
         yt.register_on_progress_callback(progress_callback)
         streams = yt.streams
 
