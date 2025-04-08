@@ -5,6 +5,7 @@ import { Group, TextureLoader, MeshStandardMaterial } from 'three';
 import { useSpring, animated } from '@react-spring/three';
 import gsap from 'gsap';
 import { Suspense } from 'react';
+import logo from "/src/assets/logo.png"
 
 const AnimatedPlane = animated(Plane);
 
@@ -14,7 +15,7 @@ export default function Logo3D() {
   const [loaded, setLoaded] = useState(false);
   
   // Load the logo texture
-  const texture = useLoader(TextureLoader, 'src/assets/logo.png');
+  const texture = useLoader(TextureLoader, logo);
   
   // Animation spring for initial appearance
   const springs = useSpring({
