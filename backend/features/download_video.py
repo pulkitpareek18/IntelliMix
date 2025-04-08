@@ -4,6 +4,10 @@ from pytubefix import YouTube
 from tqdm import tqdm
 import re
 import uuid
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from proxies import proxies
 
 def sanitize_filename(filename):
     """Sanitize the filename to remove characters that might cause issues."""
@@ -20,7 +24,8 @@ def download_highest_quality(url, path):
         def progress_callback(stream, data_chunk, bytes_remaining):
             pbar.update(len(data_chunk) // 10 ** 6)
 
-        yt = YouTube(url)
+        # Add proxies to YouTube instance
+        yt = YouTube(url, proxies=proxies)
         yt.register_on_progress_callback(progress_callback)
         streams = yt.streams
 

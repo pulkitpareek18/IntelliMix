@@ -1,40 +1,54 @@
 {
-  "mixTitle": "Honey Singh Mashup",
+  "mixTitle": "Honey Singh Mashup: The Best of Yo Yo",
   "songs": [
     {
       "title": "Brown Rang",
       "artist": "Yo Yo Honey Singh",
-      "url": "https://www.youtube.com/watch?v=dP9mQtutWw0",
-      "startTime": "00:40",
-      "endTime": "01:15"
+      "url": "https://www.youtube.com/watch?v=dP9WxqnH6ls",
+      "startTime": "00:48",
+      "endTime": "01:25"
     },
     {
       "title": "Blue Eyes",
       "artist": "Yo Yo Honey Singh",
-      "url": "https://www.youtube.com/watch?v=ics-Hix7H_w",
+      "url": "https://www.youtube.com/watch?v=icsdlwMXZ0k",
       "startTime": "00:55",
       "endTime": "01:20"
     },
     {
       "title": "Lungi Dance",
       "artist": "Yo Yo Honey Singh",
-      "url": "https://www.youtube.com/watch?v=yE5KjwbH1sQ",
-      "startTime": "00:30",
-      "endTime": "01:00"
+      "url": "https://www.youtube.com/watch?v=xd8AVbwZQtg",
+      "startTime": "00:58",
+      "endTime": "01:30"
     },
     {
-      "title": "Love Dose",
-      "artist": "Yo Yo Honey Singh",
-      "url": "https://www.youtube.com/watch?v=BW9Fzwuf4jQ",
-      "startTime": "00:45",
-      "endTime": "01:10"
+      "title": "Angreji Beat",
+      "artist": "Yo Yo Honey Singh ft. Gippy Grewal",
+      "url": "https://www.youtube.com/watch?v=jrd9eWz-k7U",
+      "startTime": "01:12",
+      "endTime": "01:45"
     },
     {
       "title": "Dope Shope",
       "artist": "Yo Yo Honey Singh",
-      "url": "https://www.youtube.com/watch?v=WlPlnMhMmSo",
-      "startTime": "00:50",
-      "endTime": "01:25"
+      "url": "https://www.youtube.com/watch?v=Kz093t5Y94s",
+      "startTime": "00:35",
+      "endTime": "01:00"
+    },
+    {
+      "title": "Party All Night",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=KbsjH56HjQs",
+      "startTime": "00:52",
+      "endTime": "01:20"
+    },
+    {
+      "title": "Love Dose",
+      "artist": "Yo Yo Honey Singh",
+      "url": "https://www.youtube.com/watch?v=b4Xf76wdQtI",
+      "startTime": "01:10",
+      "endTime": "01:45"
     }
   ]
 }

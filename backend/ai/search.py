@@ -1,6 +1,11 @@
 import pytubefix
 from pytubefix import Search
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from proxies import proxies
+
 def get_youtube_url(title, artist):
     """
     Search for a song on YouTube based on title and artist name, then return its URL.
@@ -16,7 +21,7 @@ def get_youtube_url(title, artist):
         # Create a search query combining title and artist
         query = f"{title} {artist} official"
         
-        search_results = Search(query).results
+        search_results = Search(query, proxies=proxies).results
         
         # Check if we have any results
         if not search_results:
@@ -25,6 +30,7 @@ def get_youtube_url(title, artist):
         # Get the first result's URL
         first_result = search_results[0]
         video_url = f"https://www.youtube.com/watch?v={first_result.video_id}"
+        print(proxies)
         
         return video_url
     

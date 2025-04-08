@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, url_for
 from flask_cors import CORS
 import os
 from features.audio_download import download_audio
@@ -14,12 +14,42 @@ app = Flask(__name__)
 # Enable CORS for all routes
 CORS(app)
 
+# Function to get the base URL
+def get_base_url():
+    """Get the base URL dynamically based on the request environment"""
+    if request.environ.get('HTTP_X_FORWARDED_HOST'):
+        host = request.environ['HTTP_X_FORWARDED_HOST']
+        protocol = request.environ.get('HTTP_X_FORWARDED_PROTO', 'http')
+        return f"{protocol}://{host}"
+    else:
+        return request.host_url.rstrip('/')
+
 # Clear the temp directory and its subfolders
 def clear_temp():
     temp_dir = os.path.join(os.getcwd(), "temp")
     for root, dirs, files in os.walk(temp_dir):
         for file in files:
             os.remove(os.path.join(root, file))
+
+# Clear the output directory and its subfolders
+def clear_output():
+    output_paths = [
+        os.path.join(os.getcwd(), "static", "video_dl"),
+        os.path.join(os.getcwd(), "static", "audio_dl"),
+        os.path.join(os.getcwd(), "temp", "output"),
+        os.path.join(os.getcwd(), "static", "output")
+    ]
+    
+    for path in output_paths:
+        if os.path.exists(path):
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    try:
+                        os.remove(os.path.join(root, file))
+                    except Exception as e:
+                        print(f"Error removing file {file}: {e}")
+        else:
+            os.makedirs(path, exist_ok=True)
 
 
 def time_to_seconds(time_str):
@@ -49,6 +79,9 @@ def process_array():
     
     # Clear previous temp files
     clear_temp()
+
+    # Clear previous output files
+    clear_output()
   
     # Download audio and store filenames
     names = []
@@ -69,7 +102,7 @@ def process_array():
     
     return jsonify({
         "message": "Audio processing complete! Merged file is ready.",
-        "merged_file_path": f"http://localhost:5000/{merged_file_path}"
+        "merged_file_path": f"{get_base_url()}/{merged_file_path}"
     })
 
 @app.route("/process-csv", methods=["POST"])
@@ -86,6 +119,9 @@ def process_csv():
     
     # Clear previous temp files
     clear_temp()
+
+    # Clear previous output files
+    clear_output()
     
     # Create csv directory if it doesn't exist
     os.makedirs("csv", exist_ok=True)
@@ -119,7 +155,7 @@ def process_csv():
         os.remove(temp_csv_path)
         
         return jsonify({"message": "Audio processing complete! Merged file is ready.",
-                        "merged_file_path": f"http://localhost:5000/{merged_file_path}"})
+                        "merged_file_path": f"{get_base_url()}/{merged_file_path}"})
     except Exception as e:
         return jsonify({"error": f"Error processing CSV: {str(e)}"}), 500
 
@@ -133,10 +169,14 @@ def ai_generation():
     try:
         # Clear previous temp files
         clear_temp()
+
+        # Clear previous output files
+        clear_output()
+
         prompt = data["prompt"]
         filepath = generate_ai(prompt)
         return jsonify({"message": "AI content generated successfully!",
-                        "filepath": f"http://localhost:5000/{filepath}"})
+                        "filepath": f"{get_base_url()}/{filepath}"})
         
        
     except Exception as e:
@@ -155,12 +195,15 @@ def download_video():
     try:
         # Clear previous temp files
         clear_temp()
+
+        # Clear previous output files
+        clear_output()
         
         # Download video and audio
         path = download_highest_quality(url, path)
         
         return jsonify({"message": "Video downloaded successfully!",
-                        "filepath": f"http://localhost:5000/{path}"})
+                        "filepath": f"{get_base_url()}/{path}"})
     except Exception as e:
         return jsonify({"error": f"Error downloading video: {str(e)}"}), 500
 
@@ -176,12 +219,15 @@ def audio_download():
     try:
         # Clear previous temp files
         clear_temp()
+
+        # Clear previous output files
+        clear_output()
         
         # Download video and audio
         path = download_highest_quality_audio(url, path)
         
         return jsonify({"message": "Audio downloaded successfully!",
-                        "filepath": f"http://localhost:5000/{path}"})
+                        "filepath": f"{get_base_url()}/{path}"})
     except Exception as e:
         return jsonify({"error": f"Error downloading audio: {str(e)}"}), 500
 

@@ -5,6 +5,11 @@ from tqdm import tqdm
 import re
 import uuid
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from proxies import proxies
+
 def sanitize_filename(filename):
     """Sanitize the filename to remove characters that might cause issues."""
     # Replace problematic characters with underscore
@@ -19,8 +24,8 @@ def download_highest_quality_audio(url, path):
     try:
         def progress_callback(stream, data_chunk, bytes_remaining):
             pbar.update(len(data_chunk) // 10 ** 6)
-
-        yt = YouTube(url)
+            
+        yt = YouTube(url,proxies=proxies)
         yt.register_on_progress_callback(progress_callback)
         streams = yt.streams
 

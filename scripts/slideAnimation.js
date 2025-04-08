@@ -33,17 +33,121 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         slides.forEach((slide, index) => {
+            // Set slide to exactly viewport height
+            const viewportHeight = window.innerHeight;
+            
             slide.style.cssText = `
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 100vh;
+                height: ${viewportHeight}px;
                 transition: transform ${SLIDE_TRANSITION}ms ${EASING_FUNCTION};
                 will-change: transform;
-                -webkit-transform: translateY(${index * 100}vh); /* Prefixed for Safari */
-                transform: translateY(${index * 100}vh);
+                -webkit-transform: translateY(${index * viewportHeight}px); /* Prefixed for Safari */
+                transform: translateY(${index * viewportHeight}px);
+                overflow: hidden;  /* Prevent content from extending beyond slide */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
             `;
+            
+            // Apply styles to ensure images fit within the slide
+            const slideImages = slide.querySelectorAll('img');
+            slideImages.forEach(img => {
+                // Check if desktop or mobile
+                const isMobile = window.innerWidth <= 768;
+                
+                img.style.cssText = isMobile ? 
+                `
+                    object-fit: contain;
+                    max-width: 100%;
+                    max-height: ${viewportHeight}px;
+                    display: block;
+                    width: auto;
+                    height: auto;
+                ` : 
+                `
+                    object-fit: cover;
+                    width: 100%;
+                    height: 100vh;
+                    display: block;
+                    max-width: 100vw;
+                    max-height: 100vh;
+                `;
+                
+                // When image loads, ensure it fits correctly
+                if (img.complete) {
+                    adjustImageSize(img, viewportHeight);
+                } else {
+                    img.onload = () => adjustImageSize(img, viewportHeight);
+                }
+            });
+            
+            // Ensure any slide content containers maintain proper size
+            const contentContainers = slide.querySelectorAll('.slide-content');
+            contentContainers.forEach(container => {
+                container.style.cssText = `
+                    max-height: ${viewportHeight}px;
+                    overflow: hidden;
+                    width: 100%;
+                `;
+            });
+        });
+        
+        // Add resize handler to adjust on window size changes
+        window.addEventListener('resize', adjustAllSlides);
+    }
+
+    // Function to adjust a single image to fit within viewport
+    function adjustImageSize(img, maxHeight) {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            // Mobile behavior: contain within viewport
+            if (img.offsetHeight > maxHeight) {
+                img.style.height = maxHeight + 'px';
+                img.style.width = 'auto';
+                img.style.objectFit = 'contain';
+            }
+        } else {
+            // Desktop behavior: fill viewport when fullscreen
+            img.style.width = '100%';
+            img.style.height = '100vh';
+            img.style.objectFit = 'cover';
+            
+            // Check if the image is in a slide with specific display needs
+            const slideParent = img.closest('.slide');
+            if (slideParent && slideParent.classList.contains('contain-image')) {
+                img.style.objectFit = 'contain';
+            }
+        }
+    }
+
+    // Function to adjust all slides and images when window resizes
+    function adjustAllSlides() {
+        const viewportHeight = window.innerHeight;
+        
+        slides.forEach((slide, index) => {
+            // Update slide height to match viewport
+            slide.style.height = viewportHeight + 'px';
+            
+            // Update transform to maintain position
+            slide.style.webkitTransform = `translateY(${(index - currentSlide) * viewportHeight}px)`;
+            slide.style.transform = `translateY(${(index - currentSlide) * viewportHeight}px)`;
+            
+            // Adjust images within the slide
+            const slideImages = slide.querySelectorAll('img');
+            slideImages.forEach(img => {
+                adjustImageSize(img, viewportHeight);
+            });
+            
+            // Adjust content containers
+            const contentContainers = slide.querySelectorAll('.slide-content');
+            contentContainers.forEach(container => {
+                container.style.maxHeight = viewportHeight + 'px';
+            });
         });
     }
 
@@ -138,11 +242,13 @@ document.addEventListener('DOMContentLoaded', () => {
         isAnimating = true;
         currentSlide = index;
 
-        const translateValue = -currentSlide * 100;
+        const viewportHeight = window.innerHeight;
+        const translateValue = -currentSlide * viewportHeight;
+        
         slides.forEach((slide, i) => {
             slide.style.transition = `transform ${SLIDE_TRANSITION}ms ${EASING_FUNCTION}`;
-            slide.style.webkitTransform = `translateY(${translateValue + (i * 100)}vh)`; // Safari fix
-            slide.style.transform = `translateY(${translateValue + (i * 100)}vh)`;
+            slide.style.webkitTransform = `translateY(${translateValue + (i * viewportHeight)}px)`; // Safari fix
+            slide.style.transform = `translateY(${translateValue + (i * viewportHeight)}px)`;
         });
 
         updateHeaderStyles();
@@ -233,12 +339,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('touchend', handleTouchEnd, { passive: false });
         window.addEventListener('keydown', handleKeydown);
         
-        window.addEventListener('resize', () => {
-            slides.forEach((slide, index) => {
-                slide.style.webkitTransform = `translateY(${(index - currentSlide) * 100}vh)`; // Safari fix
-                slide.style.transform = `translateY(${(index - currentSlide) * 100}vh)`;
-            });
-        });
+        // Initial call to adjust all slides
+        adjustAllSlides();
     }
 
     init();
