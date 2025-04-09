@@ -116,10 +116,6 @@ def analyze_mix(json_str=None, file_path='audio_data.json'):
     if json_str is None:
         json_str = load_json_from_file(file_path)
         
-        # If file not found, request manual input
-        if json_str is None:
-            print("Requesting manual input.")
-            json_str = get_json_input()
     
     # Parse JSON and get song information
     result = parse_mix_json(json_str)

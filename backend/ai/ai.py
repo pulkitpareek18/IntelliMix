@@ -8,7 +8,7 @@ from io import StringIO
 import re
 from search import get_youtube_url
 
-def generate(prompt = "create a parody of honey singh songs"):
+def generate(prompt="create a parody of honey singh songs", json_path="audio_data.json"):
     client = genai.Client(
         api_key="AIzaSyC7j_xulPS1SP8yaMbCw71oSRUXQqQnxKg",
     )
@@ -113,7 +113,8 @@ Output the result in the following JSON format only no starting and trainling ba
         print(chunk.text, end="")
         full_response += chunk.text
 
-    with open ("audio_data.json", "w") as f:
+    # Save to the specified JSON path
+    with open(json_path, "w") as f:
         f.write(full_response)
 
     url_start_end = []
