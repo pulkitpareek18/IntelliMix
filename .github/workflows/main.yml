@@ -1,0 +1,28 @@
+name: Deploy IntelliMix to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /IntelliMix
+            git pull origin main
+            sudo systemctl restart intellimix
+            sudo systemctl restart nginx
+            sudo systemctl status intellimix
+            sudo systemctl status nginx
