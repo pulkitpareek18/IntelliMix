@@ -72,6 +72,12 @@ def time_to_seconds(time_str):
         return minutes * 60 + seconds
     return int(time_str)
 
+@app.route("/", methods=["GET"])
+def home(){
+    return jsonify({"message": "Welcome to the Audio Processing API!"})
+}
+
+
 @app.route("/process-array", methods=["POST"])
 @with_session
 def process_array(session_id):
