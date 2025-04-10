@@ -41,28 +41,4 @@ Download high-quality audio and video content. Optimized for the best possible q
 - YouTube API integration
 - Audio processing libraries
 
-## Getting Started
 
-### Prerequisites
-- Node.js (v16+)
-- Python (v3.8+)
-- pip
-
-### Installation
-
-#### Backend Setup
-```bash
-# Navigate to backend directory
-cd backend
-
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
