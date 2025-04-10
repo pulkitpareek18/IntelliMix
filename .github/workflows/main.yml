@@ -21,6 +21,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /IntelliMix
+            git reset --hard
             git pull origin main
             sudo systemctl restart intellimix
             sudo systemctl restart nginx
