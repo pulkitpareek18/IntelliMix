@@ -13,6 +13,7 @@ from features.download_video import download_highest_quality
 from features.download_audio import download_highest_quality_audio
 from session_manager import SessionManager
 from flask import send_file
+from proxies import fetch_proxies, updater_thread
 
 app = Flask(__name__)
 # Use a fixed secret key instead of a random one to ensure consistency across restarts
@@ -30,6 +31,13 @@ CORS(app,
      resources={r"/*": {"origins": "*"}},  # Replace with your frontend domain in production 
      expose_headers=["Content-Disposition"],
      allow_headers=["Content-Type", "Authorization"])
+
+
+
+# Initial fetch of proxies
+fetch_proxies()     
+# Start the background proxy updater thread
+updater_thread.start()  
 
 # Initialize session manager
 session_manager = SessionManager()

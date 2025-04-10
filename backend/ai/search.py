@@ -4,7 +4,7 @@ from pytubefix import Search
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from proxies import proxies
+from proxies import get_working_proxy
 
 def get_youtube_url(title, artist):
     """
@@ -21,7 +21,7 @@ def get_youtube_url(title, artist):
         # Create a search query combining title and artist
         query = f"{title} {artist} official"
         
-        search_results = Search(query, proxies=proxies).results
+        search_results = Search(query, proxies=get_working_proxy()).results
         
         # Check if we have any results
         if not search_results:
