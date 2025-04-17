@@ -5,3 +5,4 @@ moviepy==1.0.3
 pydub==0.25.1
 pytubefix==8.12.1
 tqdm==4.65.0
+google.genai
