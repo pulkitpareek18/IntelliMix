@@ -1,23 +1,3 @@
 proxies = {
-    'http': 'http://tnagxjqb:p4x96vgluhzy@38.153.152.244:9594',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@38.153.152.244:9594',
-    # Alternative proxies that can be uncommented if needed:
-    'http': 'http://tnagxjqb:p4x96vgluhzy@86.38.234.176:6630',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@86.38.234.176:6630',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@173.211.0.148:6641',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@173.211.0.148:6641',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@161.123.152.115:6360',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@161.123.152.115:6360',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@216.10.27.159:6837',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@216.10.27.159:6837',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@154.36.110.199:6853',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@154.36.110.199:6853',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@45.151.162.198:6600',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@45.151.162.198:6600',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@185.199.229.156:7492',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@185.199.229.156:7492',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@185.199.228.220:7300',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@185.199.228.220:7300',
-    'http': 'http://tnagxjqb:p4x96vgluhzy@185.199.231.45:8382',
-    'https': 'http://tnagxjqb:p4x96vgluhzy@185.199.231.45:8382',
+    
 }
