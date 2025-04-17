@@ -1,4 +1,4 @@
-name: Deploy IntelliMix to EC2
+name: Deploy IntelliMix to Google Cloud
 
 on:
   push:
@@ -16,9 +16,9 @@ jobs:
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             cd /IntelliMix
             git reset --hard
