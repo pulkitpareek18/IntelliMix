@@ -40,5 +40,6 @@ Download high-quality audio and video content. Optimized for the best possible q
 - Google Gemini AI integration
 - YouTube API integration
 - Audio processing libraries
+- Google Cloud Platform
 
 
