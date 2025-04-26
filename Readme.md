@@ -10,7 +10,7 @@ IntelliMix is a powerful web application that transforms your creative vision in
 
 ### 🎵 AI Music Studio
 Create unique transformations of songs using advanced AI. Perfect for remixes, covers, and creative experiments.
-- Generate AI-powered music mashups and transformations
+- Generate AI-powered music mashups and transformations within 41 seconds.
 - Customize with detailed prompts
 - Download high-quality audio files
 
@@ -23,7 +23,7 @@ Extract and edit specific portions from audio tracks. Supports batch processing 
 ### 📱 Media Downloader
 Download high-quality audio and video content. Optimized for the best possible quality.
 - Download videos from various platforms
-- Choose quality options
+- Choose quality options(only platform where you can download the video in 4k)
 - Fast and reliable processing
 
 ## Technology Stack
