@@ -1,0 +1,19 @@
+{
+  "mixTitle": "Paro & Sahiba Mashup by Aditya Rikhari",
+  "songs": [
+    {
+      "title": "Paro",
+      "artist": "Aditya Rikhari",
+      "url": "https://www.youtube.com/watch?v=5G27N-5t1n0",
+      "startTime": "00:00:10",
+      "endTime": "00:00:45"
+    },
+    {
+      "title": "Sahiba",
+      "artist": "Aditya Rikhari",
+      "url": "https://www.youtube.com/watch?v=hWeV_Jxh-7w",
+      "startTime": "00:00:20",
+      "endTime": "00:01:00"
+    }
+  ]
+}
