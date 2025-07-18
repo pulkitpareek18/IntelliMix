@@ -88,11 +88,11 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="text-center py-12">
-      <div className="mb-16">
+    <div className="text-center py-6 sm:py-12">
+      <div className="mb-8 sm:mb-16">
         {/* Existing title section */}
-        <div className="relative inline-block mb-8">
-          <div className="w-40 h-40 mx-auto">
+        <div className="relative inline-block mb-6 sm:mb-8">
+          <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto">
             <Canvas>
               <PerspectiveCamera makeDefault position={[0, 0, 4]} />
               <ambientLight intensity={0.5} />
@@ -103,7 +103,7 @@ function HomePage() {
         </div>
         <h1 
           ref={titleRef}
-          className="text-7xl font-bold mb-6 tracking-tight text-transparent bg-clip-text"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 tracking-tight text-transparent bg-clip-text px-4"
           style={{
             background: `linear-gradient(to right, ${colors.brightRed}, ${colors.vibrantYellow}, ${colors.brightRed})`,
             backgroundClip: 'text'
@@ -113,7 +113,7 @@ function HomePage() {
         </h1>
         <p 
           ref={descriptionRef}
-          className="text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed"
+          className="text-lg sm:text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed px-4"
         >
           Transform your creative vision into reality with our
           <span style={{ color: colors.deepRed }}> AI-powered </span>
@@ -123,42 +123,42 @@ function HomePage() {
 
       {/* Benefits section */}
       <div 
-        className="max-w-5xl mx-auto mb-24 px-4"
+        className="max-w-5xl mx-auto mb-12 sm:mb-24 px-4"
         ref={benefitsRef}
       >
         <div 
-          className="rounded-2xl p-8 relative overflow-hidden"
+          className="rounded-2xl p-6 sm:p-8 relative overflow-hidden"
           style={{ 
             backgroundColor: `${colors.deepRed}05`,
             border: `1px solid ${colors.deepRed}30`,
             boxShadow: `0 0 30px ${colors.deepRed}10`
           }}
         >
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex flex-col items-center mb-6 sm:mb-8">
             <div 
-              className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-4"
               style={{ 
                 background: `linear-gradient(to right, ${colors.brightRed}, ${colors.vibrantYellow})`,
                 boxShadow: `0 10px 20px ${colors.brightRed}30`
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="white">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <h2 
-              className="text-3xl font-bold mb-2" 
+              className="text-2xl sm:text-3xl font-bold mb-2" 
               style={{ color: colors.deepRed }}
             >
               Speed Up Your Workflow
             </h2>
             <div 
-              className="w-24 h-1 rounded-full mb-6"
+              className="w-16 sm:w-24 h-1 rounded-full mb-6"
               style={{ background: `linear-gradient(to right, ${colors.brightRed}, ${colors.vibrantYellow})` }}
             ></div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex items-center mb-4">
                 <div 
@@ -241,14 +241,14 @@ function HomePage() {
       </div>
 
       {/* Key Functionality Highlight */}
-      <div className="max-w-5xl mx-auto mb-20 px-4">
+      <div className="max-w-5xl mx-auto mb-12 sm:mb-20 px-4">
         <h2 
-          className="text-3xl font-bold mb-12 text-center"
+          className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-center"
           style={{ color: colors.deepRed }}
         >
           Core Functionality
         </h2>
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {/* Intelligent Mashup Creator */}
           <div 
             className="rounded-2xl p-8 relative overflow-hidden"
@@ -405,7 +405,7 @@ function HomePage() {
         </div>
       </div>
 
-      <div ref={featuresRef} className="grid md:grid-cols-3 gap-8 mt-16">
+      <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16">
         <FeatureCard
           icon={<FileMusic className="w-12 h-12" />}
           title="AI Music Studio"
