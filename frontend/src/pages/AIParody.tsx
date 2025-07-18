@@ -164,11 +164,11 @@ export default function AIParody() {
         <p className="text-lg" style={{ color: colors.textDark }}>Transform music with AI magic - create high quality Mashups in seconds</p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-4 sm:gap-8">
         {/* Main Creation Area */}
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-white rounded-2xl p-8 shadow-sm" 
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-8 shadow-sm" 
               style={{ 
                 borderColor: colors.softRed,
                 borderWidth: '1px',
@@ -237,7 +237,7 @@ export default function AIParody() {
           </form>
 
           <div 
-            className="mt-8 bg-white rounded-2xl p-8 shadow-sm" 
+            className="mt-6 sm:mt-8 bg-white rounded-2xl p-4 sm:p-8 shadow-sm" 
             style={{ 
               borderColor: colors.softRed,
               borderWidth: '1px',
@@ -260,24 +260,24 @@ export default function AIParody() {
               </div>
             ) : generatedAudio?.filePath ? (
               // Generated audio display
-              <div className="rounded-xl p-6" style={{ backgroundColor: colors.softerRed }}>
-                <div className="flex flex-col space-y-6">
-                  <div className="flex items-center justify-between">
+              <div className="rounded-xl p-4 sm:p-6" style={{ backgroundColor: colors.softerRed }}>
+                <div className="flex flex-col space-y-3 sm:space-y-6">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center space-x-2">
                       <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center" 
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center" 
                         style={{ backgroundColor: colors.deepRed }}
                       >
-                        <Music className="w-5 h-5" style={{ color: colors.white }} />
+                        <Music className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: colors.white }} />
                       </div>
                       <div>
-                        <h3 className="font-medium" style={{ color: colors.deepRed }}>Your AI Parody</h3>
+                        <h3 className="font-medium text-sm sm:text-base" style={{ color: colors.deepRed }}>Your AI Parody</h3>
                         <p className="text-xs" style={{ color: colors.textDark }}>Generated just now</p>
                       </div>
                     </div>
                     <button 
                       onClick={downloadAudio}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-lg transition-all hover:shadow-md"
+                      className="flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-4 sm:py-2 rounded-lg transition-all hover:shadow-md text-sm"
                       style={{ 
                         backgroundColor: colors.deepRed,
                         color: colors.white,
@@ -285,27 +285,27 @@ export default function AIParody() {
                       }}
                     >
                       <Download className="w-4 h-4" />
-                      <span>Download</span>
+                      <span className="hidden sm:inline">Download</span>
                     </button>
                   </div>
                   
                   {/* Stylized audio player */}
                   <div 
-                    className="w-full rounded-xl p-4" 
+                    className="w-full rounded-xl p-2 sm:p-4" 
                     style={{ 
                       backgroundColor: colors.white,
                       borderColor: colors.softRed,
                       borderWidth: '1px'
                     }}
                   >
-                    <div className="flex items-center space-x-3 mb-3">
+                    <div className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-3">
                       <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center animate-pulse"
+                        className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center animate-pulse"
                         style={{ 
                           background: `linear-gradient(to right, ${colors.brightRed}, ${colors.vibrantYellow})`,
                         }}
                       >
-                        <Play className="w-4 h-4" style={{ color: colors.white }} />
+                        <Play className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: colors.white }} />
                       </div>
                       <div className="h-1 flex-grow rounded-full" style={{ backgroundColor: colors.softRed }}>
                         <div 
@@ -327,22 +327,22 @@ export default function AIParody() {
                       Your browser does not support the audio element.
                     </audio>
                     
-                    <p className="mt-3 text-sm text-center" style={{ color: colors.textDark }}>
+                    <p className="mt-2 sm:mt-3 text-xs sm:text-sm text-center" style={{ color: colors.textDark }}>
                       AI-generated parody based on your prompt
                     </p>
                   </div>
                   
                   {/* Song info */}
-                  <div className="flex items-center justify-between px-2">
-                    <div className="flex items-center space-x-2">
-                      <Brain className="w-4 h-4" style={{ color: colors.brightRed }} />
-                      <span className="text-sm" style={{ color: colors.textDark }}>
+                  <div className="flex items-center justify-between px-1 sm:px-2 text-xs sm:text-sm">
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <Brain className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: colors.brightRed }} />
+                      <span style={{ color: colors.textDark }}>
                         AI Generated
                       </span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Sparkles className="w-4 h-4" style={{ color: colors.brightRed }} />
-                      <span className="text-sm" style={{ color: colors.textDark }}>
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" style={{ color: colors.brightRed }} />
+                      <span style={{ color: colors.textDark }}>
                         High Quality
                       </span>
                     </div>
