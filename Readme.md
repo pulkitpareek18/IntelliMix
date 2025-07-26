@@ -41,5 +41,6 @@ Download high-quality audio and video content. Optimized for the best possible q
 - YouTube API integration
 - Audio processing libraries
 - Google Cloud Platform
+- Node Express Server for Authentication & Database
 
 
