@@ -7,6 +7,10 @@ import { useSpring, animated } from '@react-spring/three';
 const AnimatedSphere = animated(Sphere);
 const AnimatedBox = animated(Box);
 
+interface Background3DProps {
+  showWave?: boolean;
+}
+
 // Define vibrant red and yellow color palette
 const colors = {
   // Red spectrum
@@ -37,7 +41,7 @@ const createWavePoints = (count: number, radius: number) => {
   });
 };
 
-export default function Background3D() {
+export default function Background3D({ showWave = true }: Background3DProps) {
   const groupRef = useRef<Group>(null);
   const wavePointsRef = useRef<Vector3[]>([]);
   const particlesRef = useRef<Group>(null);
@@ -68,7 +72,7 @@ export default function Background3D() {
         ];
         // Weight colors to create vibrant effect
         const weights = [3, 2, 2, 2, 3, 3, 2, 2, 1]; // Higher numbers = more common
-        let totalWeight = weights.reduce((a, b) => a + b, 0);
+        const totalWeight = weights.reduce((a, b) => a + b, 0);
         let random = Math.random() * totalWeight;
         
         for (let i = 0; i < weights.length; i++) {
@@ -77,7 +81,7 @@ export default function Background3D() {
         }
         return palette[0];
       })()
-    })), [colors]
+    })), []
   );
 
   // Animation spring - energetic for vibrant theme
@@ -139,41 +143,42 @@ export default function Background3D() {
   return (
     <group ref={groupRef} position={[0, 0, -20]}>
       {/* Audio wave visualization with vibrant color scheme */}
-      {wavePointsRef.current.map((point, i) => (
-        <Trail
-          key={i}
-          width={2.2}
-          length={6}
-          color={new Color(
-            i % 5 === 0 ? colors.brightRed : 
-            i % 5 === 1 ? colors.vibrantYellow : 
-            i % 5 === 2 ? colors.deepRed : 
-            i % 5 === 3 ? colors.softYellow : 
-            colors.vividRed
-          )}
-          attenuation={(t) => t * t}
-        >
-          <AnimatedSphere
-            position={point}
-            scale={springs.scale.to(s => s * 0.2)}
+      {showWave &&
+        wavePointsRef.current.map((point, i) => (
+          <Trail
+            key={i}
+            width={2.2}
+            length={6}
+            color={new Color(
+              i % 5 === 0 ? colors.brightRed : 
+              i % 5 === 1 ? colors.vibrantYellow : 
+              i % 5 === 2 ? colors.deepRed : 
+              i % 5 === 3 ? colors.softYellow : 
+              colors.vividRed
+            )}
+            attenuation={(t) => t * t}
           >
-            <MeshDistortMaterial
-              color={
-                i % 5 === 0 ? colors.brightRed : 
-                i % 5 === 1 ? colors.vibrantYellow : 
-                i % 5 === 2 ? colors.deepRed : 
-                i % 5 === 3 ? colors.softYellow : 
-                colors.vividRed
-              }
-              speed={2.2}
-              distort={0.18}  // More distortion for dynamic effect
-              radius={1}
-              roughness={0.12}
-              metalness={0.75}
-            />
-          </AnimatedSphere>
-        </Trail>
-      ))}
+            <AnimatedSphere
+              position={point}
+              scale={springs.scale.to(s => s * 0.2)}
+            >
+              <MeshDistortMaterial
+                color={
+                  i % 5 === 0 ? colors.brightRed : 
+                  i % 5 === 1 ? colors.vibrantYellow : 
+                  i % 5 === 2 ? colors.deepRed : 
+                  i % 5 === 3 ? colors.softYellow : 
+                  colors.vividRed
+                }
+                speed={2.2}
+                distort={0.18}  // More distortion for dynamic effect
+                radius={1}
+                roughness={0.12}
+                metalness={0.75}
+              />
+            </AnimatedSphere>
+          </Trail>
+        ))}
 
       {/* Floating particles with vibrant color scheme */}
       <group ref={particlesRef}>

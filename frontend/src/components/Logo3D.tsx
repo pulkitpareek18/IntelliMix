@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useFrame, useLoader, Canvas } from '@react-three/fiber';
 import { Plane } from '@react-three/drei';
-import { Group, TextureLoader, MeshStandardMaterial } from 'three';
+import { Group, Mesh, TextureLoader, MeshStandardMaterial } from 'three';
 import { useSpring, animated } from '@react-spring/three';
 import gsap from 'gsap';
 import { Suspense } from 'react';
@@ -79,12 +79,12 @@ export default function Logo3D() {
   return (
     <animated.group 
       ref={groupRef} 
-      rotation={springs.rotation as any}
+      rotation={springs.rotation as unknown as [number, number, number]}
     >
       {/* Main logo */}
       <AnimatedPlane 
         args={[3, 3]} // Width and height of the plane
-        scale={springs.scale as any}
+        scale={springs.scale as unknown as [number, number, number]}
       >
         <meshStandardMaterial 
           ref={materialRef}
@@ -132,7 +132,7 @@ export default function Logo3D() {
 
 // Small animated particle that orbits around the logo
 function AnimatedParticle({ index }: { index: number }) {
-  const ref = useRef<any>(null);
+  const ref = useRef<Mesh>(null);
   
   useFrame((state) => {
     if (ref.current) {

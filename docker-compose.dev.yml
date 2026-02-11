@@ -1,0 +1,67 @@
+name: intellimix-dev
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-intellimix}
+      POSTGRES_USER: ${POSTGRES_USER:-intellimix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-intellimix}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-intellimix} -d ${POSTGRES_DB:-intellimix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - postgres-data-dev:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:-replace-with-strong-random-value}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-replace-with-strong-random-value}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-intellimix}:${POSTGRES_PASSWORD:-intellimix}@db:5432/${POSTGRES_DB:-intellimix}
+      FRONTEND_ORIGIN: http://localhost:${DEV_FRONTEND_PORT:-5173}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_MODEL_NAME: ${GEMINI_MODEL_NAME:-gemini-2.0-flash}
+      GEMINI_MAX_RETRIES: ${GEMINI_MAX_RETRIES:-2}
+      GEMINI_RETRY_BASE_SECONDS: ${GEMINI_RETRY_BASE_SECONDS:-2}
+      JWT_ACCESS_TOKEN_MINUTES: ${JWT_ACCESS_TOKEN_MINUTES:-30}
+      JWT_REFRESH_TOKEN_DAYS: ${JWT_REFRESH_TOKEN_DAYS:-30}
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-100}
+      STORAGE_ROOT: /app/storage
+      PORT: 5000
+    volumes:
+      - ./backend:/app
+      - backend-storage-dev:/app/storage
+    ports:
+      - "${DEV_BACKEND_PORT:-5001}:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      VITE_API_URL: http://localhost:${DEV_BACKEND_PORT:-5001}
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules-dev:/app/node_modules
+    ports:
+      - "${DEV_FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres-data-dev:
+  backend-storage-dev:
+  frontend-node-modules-dev:

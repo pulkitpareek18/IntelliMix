@@ -2,3 +2,20 @@
 *.mp4
 *.webm
 *.m4a
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Local env and generated data
+.env
+.env.docker
+backend/.env
+frontend/.env
+backend/intellimix.db
+backend/storage/

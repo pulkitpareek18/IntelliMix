@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Music, Upload, Clock, Plus, X, Play, Loader, Download, CheckCircle, AlertCircle } from 'lucide-react';
-import { ENDPOINTS } from '../utils/api';
+import { ENDPOINTS, apiRequest, getAuthenticatedFileUrl } from '../utils/api';
 
 // Define vibrant red and yellow color palette with softer application
 const colors = {
@@ -95,22 +95,13 @@ export default function YouTubeTrimmer() {
         }))
       };
       
-      console.log("Sending data to process-array endpoint:", formattedData);
-      
-      const response = await fetch(ENDPOINTS.PROCESS_ARRAY, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formattedData),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      console.log("Received result:", result);
+      const result = await apiRequest<{ merged_file_path: string; message: string }>(
+        ENDPOINTS.PROCESS_ARRAY,
+        {
+          method: 'POST',
+          body: JSON.stringify(formattedData),
+        }
+      );
       
       setManualProcessingResult({
         merged_file_path: result.merged_file_path,
@@ -135,17 +126,15 @@ export default function YouTubeTrimmer() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      
-      const response = await fetch(ENDPOINTS.PROCESS_CSV, {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-      }
-      
-      const result = await response.json();
+
+      const result = await apiRequest<{ merged_file_path: string; message: string }>(
+        ENDPOINTS.PROCESS_CSV,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
       setProcessingResult({
         merged_file_path: result.merged_file_path,
         message: result.message
@@ -166,43 +155,20 @@ export default function YouTubeTrimmer() {
   const downloadAudio = (url: string) => {
     // Use isDownloading instead of isProcessing
     setIsDownloading(true);
-    
-    fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to download: ${response.statusText}`);
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        // Create blob URL
-        const blobUrl = window.URL.createObjectURL(blob);
-        
-        // Create download link
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = 'combined_audio.mp3';
-        
-        // Trigger download
-        document.body.appendChild(link);
-        link.click();
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(blobUrl);
-          setIsDownloading(false);
-        }, 100);
-      })
-      .catch(error => {
-        console.error("Download error:", error);
-        // Don't update processingError, use a different state or notification approach
-        alert(`Download failed: ${error.message}`);
-        setIsDownloading(false);
-        
-        // Fallback - open in new tab
-        window.open(url, '_blank');
-      });
+
+    try {
+      const secureUrl = getAuthenticatedFileUrl(url);
+      const link = document.createElement('a');
+      link.href = secureUrl;
+      link.download = 'combined_audio.mp3';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      alert(`Download failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
