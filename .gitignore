@@ -8,6 +8,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+.pytest_cache/
 
 # Node
 node_modules/
@@ -19,3 +20,18 @@ backend/.env
 frontend/.env
 backend/intellimix.db
 backend/storage/
+backend/user_sessions/
+backend/temp/
+backend/static/audio_dl/
+backend/static/video_dl/
+backend/static/output/
+backend/.pytest_cache/
+backend/*.db
+frontend/dist/
+storage-test/
+storage-test-runner/
+
+# Archived legacy stacks
+backend_ai/
+backend_audio_processing/
+backend_auth_db/

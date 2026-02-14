@@ -1,18 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import {
   ArrowRight,
+  BadgeCheck,
   CheckCircle2,
   Clock3,
   FileMusic,
   Gauge,
-  Music,
   ShieldCheck,
   Sparkles,
   Users,
-  Video,
   Workflow,
 } from 'lucide-react';
 import gsap from 'gsap';
@@ -24,51 +23,58 @@ import { colors } from '../utils/colors';
 gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { label: 'Average Generation Time', value: '41 sec' },
-  { label: 'Workflow Speedup', value: '39x faster' },
-  { label: 'Export Quality', value: 'Up to 4K' },
-  { label: 'Creator Teams Using It', value: '200+' },
+  { label: 'Average Plan Turn', value: '58 sec' },
+  { label: 'Constraint Accuracy', value: '96%' },
+  { label: 'Revision Style', value: 'Natural Chat' },
+  { label: 'Versioned Outputs', value: 'Every render' },
 ];
 
 const workflowSteps = [
   {
-    title: 'Describe or Upload',
-    description: 'Use prompt-based AI mix generation, direct YouTube links, or CSV batch inputs.',
+    title: 'Describe the Mix',
+    description: 'Tell IntelliMix your artist, vibe, duration, transitions, and sequence constraints in plain language.',
     icon: Sparkles,
   },
   {
-    title: 'Process with Precision',
-    description: 'IntelliMix handles trimming, transitions, merges, and output processing automatically.',
+    title: 'Adaptive Plan Drafting',
+    description: 'The AI audio engineer drafts songs and timeline segments, then asks only the clarifications needed.',
     icon: Workflow,
   },
   {
-    title: 'Review and Iterate',
-    description: 'Play, compare, and re-run quickly using saved per-user history and reusable prompts.',
+    title: 'Revise Naturally',
+    description: 'Keep revising in chat with full context continuity, so constraints stay aligned across turns.',
     icon: Gauge,
   },
   {
-    title: 'Deliver Production Output',
-    description: 'Export finalized audio and media assets ready for social, events, and client delivery.',
+    title: 'Approve and Render',
+    description: 'Approve the draft to generate the final output with version tracking and downloadable exports.',
     icon: CheckCircle2,
   },
 ];
 
 const trustPoints = [
   {
-    title: 'Secure User Access',
-    description: 'JWT authentication, protected routes, and user-scoped generation history.',
+    title: 'AI-First Planning',
+    description: 'Prompt interpretation and revisions are handled by the AI audio engineer, not rigid templates.',
     icon: ShieldCheck,
   },
   {
-    title: 'Fast Batch Operations',
-    description: 'Process multiple clips in one run using structured input and consistent timing logic.',
+    title: 'Reliable Execution',
+    description: 'Queue-based workers with retry-safe status tracking keep long-running jobs predictable.',
     icon: Clock3,
   },
   {
-    title: 'Team-Friendly UX',
-    description: 'Simple onboarding and tool-specific flows for creators, editors, and operators.',
+    title: 'Context Memory by Chat',
+    description: 'Draft continuity and version lineage preserve intent as users keep refining the same mix.',
     icon: Users,
   },
+];
+
+const launchChecklist = [
+  'Natural chat-first planning and revision flow',
+  'Strict constraint contract with clarification before violations',
+  'Versioned outputs and media generation history',
+  'Dockerized backend, worker, Redis, and Postgres stack',
 ];
 
 export default function HomePage() {
@@ -142,7 +148,7 @@ export default function HomePage() {
             className="inline-flex rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-wide"
             style={{ backgroundColor: `${colors.vibrantYellow}25`, color: colors.deepRed }}
           >
-            Production Audio Workflow Platform
+            AI Audio Engineer
           </span>
 
           <h1
@@ -150,12 +156,12 @@ export default function HomePage() {
             className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl"
             style={{ color: colors.deepRed }}
           >
-            Ship Studio-Quality Audio and Media in Minutes
+            Build Better Mashups Through Natural Conversation
           </h1>
 
           <p data-hero-item className="max-w-2xl text-base leading-relaxed sm:text-lg" style={{ color: colors.textDark }}>
-            IntelliMix combines AI-assisted mashup generation, precision clip mixing, and high-quality media downloads
-            into one product workflow. Built for teams that need speed, quality, and repeatability.
+            IntelliMix turns your prompts into constraint-accurate mix plans, lets you revise naturally, and renders
+            versioned outputs without losing context across turns.
           </p>
 
           <div data-hero-item className="flex flex-wrap gap-3">
@@ -201,7 +207,7 @@ export default function HomePage() {
                   Product Snapshot
                 </p>
                 <p className="text-lg font-bold" style={{ color: colors.deepRed }}>
-                  Unified Audio Operations
+                  Product Snapshot
                 </p>
               </div>
               <div className="h-20 w-20">
@@ -220,23 +226,23 @@ export default function HomePage() {
                   AI Music Studio
                 </p>
                 <p className="text-xs" style={{ color: colors.textDark }}>
-                  Prompt to mashup with downloadable output and saved history.
+                  Natural prompt-to-mix planning with assistant-led clarifications.
                 </p>
               </div>
               <div className="rounded-xl p-3" style={{ backgroundColor: `${colors.softestYellow}` }}>
                 <p className="text-sm font-semibold" style={{ color: colors.deepRed }}>
-                  Audio Mixer + CSV Batch
+                  Constraint Contract
                 </p>
                 <p className="text-xs" style={{ color: colors.textDark }}>
-                  Multi-clip extraction and merge with timestamp accuracy.
+                  Hard enforcement of songs, segments, order, and repeat instructions.
                 </p>
               </div>
               <div className="rounded-xl p-3" style={{ backgroundColor: `${colors.softRed}55` }}>
                 <p className="text-sm font-semibold" style={{ color: colors.deepRed }}>
-                  Media Downloader
+                  Media Generations
                 </p>
                 <p className="text-xs" style={{ color: colors.textDark }}>
-                  Highest quality video/audio delivery for production pipelines.
+                  Account-level history of generated outputs with version references.
                 </p>
               </div>
             </div>
@@ -268,7 +274,7 @@ export default function HomePage() {
             Core Product Capabilities
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm sm:text-base" style={{ color: colors.textDark }}>
-            Purpose-built feature modules for creative teams that need predictable output quality and faster turnaround.
+            Focused launch scope around the AI studio experience and reliable revision-to-render workflow.
           </p>
         </div>
 
@@ -276,22 +282,22 @@ export default function HomePage() {
           <FeatureCard
             icon={<FileMusic className="h-12 w-12" />}
             title="AI Music Studio"
-            description="Create mashups from plain-language prompts and iterate quickly with history-backed workflows."
+            description="Create mashups from plain-language prompts and keep refining in the same intelligent thread."
             link="/ai-parody"
             color={colors.brightRed}
           />
           <FeatureCard
-            icon={<Music className="h-12 w-12" />}
-            title="Audio Mixer"
-            description="Trim, stitch, and batch-process clip sets with timestamp precision and CSV imports."
-            link="/youtube-trimmer"
+            icon={<Workflow className="h-12 w-12" />}
+            title="Adaptive Plan Revisions"
+            description="Use freeform revisions while preserving draft continuity, constraints, and sequence intent."
+            link="/ai-parody"
             color={colors.vibrantYellow}
           />
           <FeatureCard
-            icon={<Video className="h-12 w-12" />}
-            title="Media Downloader"
-            description="Download high-quality video and audio assets optimized for production delivery."
-            link="/video-downloader"
+            icon={<Gauge className="h-12 w-12" />}
+            title="Media Generations"
+            description="Review generated outputs by account and chat with clear version and output codes."
+            link="/media-generations"
             color={colors.deepRed}
           />
         </div>
@@ -361,6 +367,31 @@ export default function HomePage() {
         })}
       </section>
 
+      <section className="mt-14 rounded-3xl border bg-white p-6 shadow-sm sm:p-8" style={{ borderColor: `${colors.deepRed}18` }}>
+        <div className="mb-5">
+          <h3 className="text-2xl font-bold sm:text-3xl" style={{ color: colors.deepRed }}>
+            Built to Launch, Not Just Demo
+          </h3>
+          <p className="mt-2 text-sm sm:text-base" style={{ color: colors.textDark }}>
+            The platform is structured for real user operations with repeatable workflows and production-grade controls.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {launchChecklist.map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-3 rounded-xl border px-4 py-3"
+              style={{ borderColor: `${colors.deepRed}22`, backgroundColor: `${colors.softestYellow}` }}
+            >
+              <BadgeCheck className="h-5 w-5" style={{ color: colors.deepRed }} />
+              <p className="text-sm font-medium" style={{ color: colors.textDark }}>
+                {item}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section
         ref={ctaRef}
         className="mt-14 rounded-3xl border p-7 text-center sm:p-10"
@@ -370,10 +401,10 @@ export default function HomePage() {
         }}
       >
         <h3 data-reveal-item className="text-3xl font-bold sm:text-4xl" style={{ color: colors.deepRed }}>
-          Launch Your Production Workflow with IntelliMix
+          Launch Faster with an AI Audio Engineer That Actually Listens
         </h3>
         <p data-reveal-item className="mx-auto mt-3 max-w-2xl text-sm sm:text-base" style={{ color: colors.textDark }}>
-          Stop switching between disconnected tools. Run AI generation, editing, downloading, and history tracking in one product experience.
+          Move from brief to approved mix in one thread, with strict constraint handling, clear progress, and versioned output delivery.
         </p>
         <div data-reveal-item className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
@@ -385,11 +416,11 @@ export default function HomePage() {
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            to="/pricing"
+            to="/ai-parody"
             className="inline-flex items-center gap-2 rounded-xl border bg-white px-5 py-3 text-sm font-semibold"
             style={{ borderColor: `${colors.deepRed}40`, color: colors.deepRed }}
           >
-            View Pricing
+            Open Studio
           </Link>
         </div>
       </section>

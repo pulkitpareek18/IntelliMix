@@ -1,97 +1,43 @@
-import React, { useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import React, { Suspense, lazy, useEffect, useRef } from 'react';
+import { BrowserRouter as Router, Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import gsap from 'gsap';
-import AIParody from './pages/AIParody';
-import YouTubeTrimmer from './pages/YouTubeTrimmer';
-import VideoDownloader from './pages/VideoDownloader';
-import HomePage from './pages/HomePage';
-import Background3D from './components/Background3D';
-import PricingPage from './pages/Pricing';
 import NavBar from './components/Navbar';
 import { colors } from './utils/colors';
-import LoginPage from './pages/Login';
-import SignupPage from './pages/Signup';
-import HistoryPage from './pages/History';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useAuth } from './context/useAuth';
+
+const HomeBackgroundScene = lazy(() => import('./components/HomeBackgroundScene'));
+const AIParody = lazy(() => import('./pages/AIParody'));
+const YouTubeTrimmer = lazy(() => import('./pages/YouTubeTrimmer'));
+const VideoDownloader = lazy(() => import('./pages/VideoDownloader'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const LoginPage = lazy(() => import('./pages/Login'));
+const SignupPage = lazy(() => import('./pages/Signup'));
+const HistoryPage = lazy(() => import('./pages/History'));
+const NotFoundPage = lazy(() => import('./pages/NotFound'));
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <AppContent />
     </Router>
   );
 }
 
 function AppContent() {
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
   const mainRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const trailContainer = document.createElement('div');
-    trailContainer.style.position = 'fixed';
-    trailContainer.style.top = '0';
-    trailContainer.style.left = '0';
-    trailContainer.style.width = '100%';
-    trailContainer.style.height = '100%';
-    trailContainer.style.pointerEvents = 'none';
-    trailContainer.style.zIndex = '1000';
-    document.body.appendChild(trailContainer);
-
-    const maxTrails = 15;
-    const trails: HTMLDivElement[] = [];
-    const trailColors = [colors.brightRed, colors.vibrantYellow, colors.deepRed, colors.softYellow];
-
-    const handleMouseMove = (event: MouseEvent) => {
-      const trail = document.createElement('div');
-      trail.style.position = 'absolute';
-      trail.style.width = `${Math.random() * 8 + 4}px`;
-      trail.style.height = trail.style.width;
-      trail.style.left = `${event.clientX}px`;
-      trail.style.top = `${event.clientY}px`;
-      trail.style.borderRadius = '50%';
-      trail.style.backgroundColor = trailColors[Math.floor(Math.random() * trailColors.length)];
-      trail.style.transform = 'translate(-50%, -50%)';
-      trail.style.boxShadow = `0 0 ${parseInt(trail.style.width, 10) * 2}px ${trail.style.backgroundColor}`;
-      trail.style.filter = 'blur(3px)';
-      trail.style.mixBlendMode = 'screen';
-      trail.style.opacity = '0.7';
-
-      trailContainer.appendChild(trail);
-      trails.push(trail);
-
-      if (trails.length > maxTrails) {
-        const oldestTrail = trails.shift();
-        if (oldestTrail?.parentNode) {
-          oldestTrail.parentNode.removeChild(oldestTrail);
-        }
-      }
-
-      trails.forEach((item) => {
-        gsap.to(item, {
-          opacity: 0,
-          width: parseInt(item.style.width, 10) * 0.5,
-          height: parseInt(item.style.height, 10) * 0.5,
-          duration: 1,
-          onComplete: () => {
-            if (item.parentNode) {
-              item.parentNode.removeChild(item);
-            }
-          },
-        });
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (trailContainer.parentNode) {
-        trailContainer.parentNode.removeChild(trailContainer);
-      }
-    };
-  }, []);
+  const isHomePage = location.pathname === '/';
+  const isAIMusicStudio = location.pathname === '/ai-parody';
+  const rootStyle = isAIMusicStudio
+    ? ({ '--studio-topbar-h': '56px' } as React.CSSProperties)
+    : undefined;
 
   useEffect(() => {
     if (!mainRef.current) {
@@ -101,63 +47,112 @@ function AppContent() {
     gsap.fromTo(mainRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
   }, [location]);
 
-  return (
-    <div className="relative min-h-screen bg-white">
-      <div className="fixed inset-0 z-0">
-        <Canvas>
-          <PerspectiveCamera makeDefault position={[0, 0, 10]} />
-          <ambientLight intensity={0.7} />
-          <pointLight position={[10, 10, 10]} intensity={1.2} />
-          <Background3D showWave={location.pathname !== '/'} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-        </Canvas>
-      </div>
+  const pageFallback = (
+    <div className="flex min-h-[220px] items-center justify-center text-sm" style={{ color: colors.darkGray }}>
+      Loading...
+    </div>
+  );
 
-      <NavBar />
+  return (
+    <div
+      className={isAIMusicStudio ? 'relative h-[100dvh] overflow-hidden bg-white' : 'relative min-h-screen bg-white'}
+      style={rootStyle}
+    >
+      {isHomePage ? (
+        <div className="fixed inset-0 z-0">
+          <Suspense fallback={<div className="h-full w-full bg-white" />}>
+            <HomeBackgroundScene />
+          </Suspense>
+        </div>
+      ) : (
+        <div
+          className="fixed inset-0 z-0"
+          style={{
+            background: `
+              radial-gradient(circle at 8% 10%, rgba(244,72,58,0.13), transparent 28%),
+              radial-gradient(circle at 92% 82%, rgba(255,185,43,0.17), transparent 30%),
+              linear-gradient(180deg, #fffdf9 0%, #ffffff 100%)
+            `,
+          }}
+        />
+      )}
+
+      <NavBar variant={isAIMusicStudio ? 'studio' : 'default'} />
 
       <main
         ref={mainRef}
-        className="relative z-10 mx-auto max-w-7xl px-2 pb-8 pt-20 sm:px-4 sm:pt-24 lg:px-8"
+        className={
+          isAIMusicStudio
+            ? 'relative z-10 w-full overflow-hidden p-0'
+            : 'relative z-10 mx-auto max-w-7xl px-2 pb-14 pt-20 sm:px-4 sm:pt-24 lg:px-8'
+        }
+        style={isAIMusicStudio ? { height: 'calc(100dvh - var(--studio-topbar-h))' } : undefined}
       >
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route
-            path="/history"
-            element={
-              <ProtectedRoute>
-                <HistoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/ai-parody"
-            element={
-              <ProtectedRoute>
-                <AIParody />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/youtube-trimmer"
-            element={
-              <ProtectedRoute>
-                <YouTubeTrimmer />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/video-downloader"
-            element={
-              <ProtectedRoute>
-                <VideoDownloader />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <Suspense fallback={pageFallback}>
+          <Routes>
+            <Route path="/" element={!loading && isAuthenticated ? <Navigate to="/ai-parody" replace /> : <HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute>
+                  <HistoryPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/media-generations"
+              element={
+                <ProtectedRoute>
+                  <HistoryPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/ai-parody"
+              element={
+                <ProtectedRoute>
+                  <AIParody />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/youtube-trimmer"
+              element={
+                <ProtectedRoute>
+                  <YouTubeTrimmer />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/video-downloader"
+              element={
+                <ProtectedRoute>
+                  <VideoDownloader />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </main>
+
+      {!isAIMusicStudio && (
+        <footer className="relative z-10 border-t border-red-100 bg-white/92 backdrop-blur-sm">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <p style={{ color: colors.darkGray }}>A product by GetUrStyle Technologies</p>
+            <div className="flex items-center gap-4 text-xs sm:text-sm">
+              <Link className="hover:underline" style={{ color: colors.deepRed }} to="/login">
+                Login
+              </Link>
+              <Link className="hover:underline" style={{ color: colors.deepRed }} to="/signup">
+                Create Account
+              </Link>
+            </div>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }

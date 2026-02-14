@@ -186,7 +186,49 @@ def _read_float_env(name: str, default: float, *, minimum: float = 0.0) -> float
         return default
 
 
-def generate(prompt: str = "create a parody of honey singh songs", json_path: str = "audio_data.json") -> str:
+def _backoff_seconds(attempt: int, retry_base_seconds: float, retry_after_seconds: int | None = None) -> int:
+    computed_retry = int(math.ceil(retry_base_seconds * (2**attempt)))
+    retry_value = retry_after_seconds or computed_retry
+    return max(1, min(retry_value, 10))
+
+
+def _stream_generate_content(
+    *,
+    client: genai.Client,
+    model_name: str,
+    contents: list[types.Content],
+    config: types.GenerateContentConfig,
+) -> str:
+    response_text = ""
+    for chunk in client.models.generate_content_stream(
+        model=model_name,
+        contents=contents,
+        config=config,
+    ):
+        if chunk.text:
+            response_text += chunk.text
+    return response_text
+
+
+def _single_generate_content(
+    *,
+    client: genai.Client,
+    model_name: str,
+    contents: list[types.Content],
+    config: types.GenerateContentConfig,
+) -> str:
+    response = client.models.generate_content(
+        model=model_name,
+        contents=contents,
+        config=config,
+    )
+    response_text = getattr(response, "text", "")
+    if isinstance(response_text, str):
+        return response_text
+    return ""
+
+
+def _generate_json_response(prompt: str, system_instruction: str) -> str:
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise AIServiceError(
@@ -194,7 +236,7 @@ def generate(prompt: str = "create a parody of honey singh songs", json_path: st
             status_code=500,
             error_code="AI_KEY_MISSING",
         )
-    model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-2.0-flash").strip() or "gemini-2.0-flash"
+    model_name = os.environ.get("GEMINI_MODEL_NAME", "gemini-3-flash-preview").strip() or "gemini-3-flash-preview"
     max_retries = _read_int_env("GEMINI_MAX_RETRIES", 2, minimum=0)
     retry_base_seconds = _read_float_env("GEMINI_RETRY_BASE_SECONDS", 2.0, minimum=1.0)
 
@@ -209,28 +251,32 @@ def generate(prompt: str = "create a parody of honey singh songs", json_path: st
 
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
-        system_instruction=[types.Part.from_text(text=SYSTEM_INSTRUCTION)],
+        system_instruction=[types.Part.from_text(text=system_instruction)],
     )
 
     response_text = ""
     for attempt in range(max_retries + 1):
         response_text = ""
         try:
-            for chunk in client.models.generate_content_stream(
-                model=model_name,
+            response_text = _stream_generate_content(
+                client=client,
+                model_name=model_name,
                 contents=contents,
                 config=config,
-            ):
-                if chunk.text:
-                    response_text += chunk.text
+            )
+            if not response_text.strip():
+                response_text = _single_generate_content(
+                    client=client,
+                    model_name=model_name,
+                    contents=contents,
+                    config=config,
+                )
             break
-        except (genai_errors.ClientError, genai_errors.ServerError) as exc:
+        except genai_errors.APIError as exc:
             mapped_error = _map_genai_error(exc, model_name=model_name)
-            retryable = mapped_error.status_code in {429, 503}
+            retryable = mapped_error.status_code in {429, 502, 503}
             if retryable and attempt < max_retries:
-                computed_retry = int(math.ceil(retry_base_seconds * (2**attempt)))
-                retry_after = mapped_error.retry_after_seconds or computed_retry
-                retry_after = max(1, min(retry_after, 10))
+                retry_after = _backoff_seconds(attempt, retry_base_seconds, mapped_error.retry_after_seconds)
                 LOGGER.warning(
                     "Gemini request failed for model %s (%s). Retrying in %ss (attempt %s/%s).",
                     model_name,
@@ -243,8 +289,58 @@ def generate(prompt: str = "create a parody of honey singh songs", json_path: st
                 continue
             raise mapped_error from exc
         except Exception as exc:
+            LOGGER.warning(
+                "Gemini streaming request failed for model %s with %s: %s",
+                model_name,
+                type(exc).__name__,
+                exc,
+            )
+            try:
+                response_text = _single_generate_content(
+                    client=client,
+                    model_name=model_name,
+                    contents=contents,
+                    config=config,
+                )
+                if response_text.strip():
+                    break
+            except genai_errors.APIError as api_exc:
+                mapped_error = _map_genai_error(api_exc, model_name=model_name)
+                retryable = mapped_error.status_code in {429, 502, 503}
+                if retryable and attempt < max_retries:
+                    retry_after = _backoff_seconds(attempt, retry_base_seconds, mapped_error.retry_after_seconds)
+                    LOGGER.warning(
+                        "Gemini fallback request failed for model %s (%s). Retrying in %ss (attempt %s/%s).",
+                        model_name,
+                        mapped_error.error_code,
+                        retry_after,
+                        attempt + 1,
+                        max_retries,
+                    )
+                    time.sleep(retry_after)
+                    continue
+                raise mapped_error from api_exc
+            except Exception as fallback_exc:
+                LOGGER.warning(
+                    "Gemini non-stream fallback failed for model %s with %s: %s",
+                    model_name,
+                    type(fallback_exc).__name__,
+                    fallback_exc,
+                )
+
+            if attempt < max_retries:
+                retry_after = _backoff_seconds(attempt, retry_base_seconds)
+                LOGGER.warning(
+                    "Gemini unexpected failure for model %s. Retrying in %ss (attempt %s/%s).",
+                    model_name,
+                    retry_after,
+                    attempt + 1,
+                    max_retries,
+                )
+                time.sleep(retry_after)
+                continue
             raise AIServiceError(
-                "Unexpected Gemini integration failure.",
+                f"Unexpected Gemini integration failure ({type(exc).__name__}).",
                 status_code=502,
                 error_code="AI_UNEXPECTED_ERROR",
             ) from exc
@@ -255,6 +351,15 @@ def generate(prompt: str = "create a parody of honey singh songs", json_path: st
             status_code=502,
             error_code="AI_EMPTY_RESPONSE",
         )
+    return response_text
+
+
+def generate_with_instruction(prompt: str, system_instruction: str) -> str:
+    return _generate_json_response(prompt, system_instruction)
+
+
+def generate(prompt: str = "create a parody of honey singh songs", json_path: str = "audio_data.json") -> str:
+    response_text = _generate_json_response(prompt, SYSTEM_INSTRUCTION)
 
     with open(json_path, "w", encoding="utf-8") as json_file:
         json_file.write(response_text)

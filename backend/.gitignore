@@ -2,8 +2,15 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.pytest_cache/
 .env
 venv/
 .venv/
 intellimix.db
 storage/
+user_sessions/
+temp/
+static/audio_dl/
+static/video_dl/
+static/output/
+*.db

@@ -540,6 +540,9 @@ export default function YouTubeTrimmer() {
               >
                 <Upload className="w-12 h-12 mx-auto mb-4" style={{ color: colors.deepRed }} />
                 <p className="mb-2" style={{ color: colors.textDark }}>Upload your CSV file with video details</p>
+                <p className="mb-3 text-xs" style={{ color: colors.textDark }}>
+                  Required columns: <span className="font-semibold">Url, Start, End</span>
+                </p>
                 <input
                   type="file"
                   accept=".csv"
@@ -548,6 +551,19 @@ export default function YouTubeTrimmer() {
                   id="csv-upload"
                 />
                 <div className="space-y-3">
+                  <a
+                    href="/templates/audio-mix-template.csv"
+                    download
+                    className="inline-flex items-center space-x-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors"
+                    style={{
+                      backgroundColor: colors.white,
+                      borderColor: colors.softRed,
+                      color: colors.deepRed,
+                    }}
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download CSV Template</span>
+                  </a>
                   <label
                     htmlFor="csv-upload"
                     className="inline-block font-medium py-2 px-4 rounded-xl transition-colors cursor-pointer shadow-sm"

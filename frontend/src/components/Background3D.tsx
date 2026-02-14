@@ -133,9 +133,10 @@ export default function Background3D({ showWave = true }: Background3DProps) {
 
   // Cleanup on unmount
   useEffect(() => {
+    const group = groupRef.current;
     return () => {
-      if (groupRef.current) {
-        groupRef.current.clear();
+      if (group) {
+        group.clear();
       }
     };
   }, []);

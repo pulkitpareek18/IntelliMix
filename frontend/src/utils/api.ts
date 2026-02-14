@@ -17,7 +17,31 @@ export const ENDPOINTS = {
   DOWNLOAD_VIDEO: '/download-video',
   DOWNLOAD_AUDIO: '/download-audio',
   GENERATE_AI: '/generate-ai',
+  MIX_SESSIONS: '/mix-sessions',
+  MIX_SESSION_PLAN: '/mix-sessions/plan',
+  MIX_CHATS: '/mix-chats',
+  MIX_CHAT_RUNS: '/mix-chat-runs',
 };
+
+export function getMixChatVersionEditRunsEndpoint(threadId: string, versionId: string): string {
+  return `${ENDPOINTS.MIX_CHATS}/${threadId}/versions/${versionId}/edit-runs`;
+}
+
+export function getMixChatPlanDraftEndpoint(threadId: string, draftId: string): string {
+  return `${ENDPOINTS.MIX_CHATS}/${threadId}/plan-drafts/${draftId}`;
+}
+
+export function getMixChatRunEventsUrl(runId: string): string {
+  const endpoint = `${ENDPOINTS.MIX_CHAT_RUNS}/${runId}/events`;
+  const base =
+    typeof window !== 'undefined' ? window.location.origin : API_URL;
+  const url = new URL(getApiEndpoint(endpoint), base);
+  const token = getAccessToken();
+  if (token) {
+    url.searchParams.set('token', token);
+  }
+  return url.toString();
+}
 
 const ACCESS_TOKEN_KEY = 'intellimix.access_token';
 const REFRESH_TOKEN_KEY = 'intellimix.refresh_token';
@@ -195,12 +219,24 @@ export async function apiRequest<T>(
 }
 
 export function getAuthenticatedFileUrl(rawUrl: string): string {
-  const token = getAccessToken();
-  if (!token || !rawUrl) {
+  if (!rawUrl) {
     return rawUrl;
   }
 
-  const url = new URL(rawUrl, window.location.origin);
-  url.searchParams.set('token', token);
+  const token = getAccessToken();
+  const apiBase = new URL(API_URL, window.location.origin);
+  const filesBase = `${apiBase.protocol}//${apiBase.host}`;
+  let url = new URL(rawUrl, filesBase);
+
+  // Force all generated file paths to resolve against backend host.
+  // This avoids legacy/wrong-host absolute URLs (e.g. localhost without backend port).
+  if (url.pathname.startsWith('/files/')) {
+    url = new URL(`${url.pathname}${url.search}`, filesBase);
+  }
+
+  if (token) {
+    url.searchParams.set('token', token);
+  }
+
   return url.toString();
 }

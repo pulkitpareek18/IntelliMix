@@ -42,9 +42,15 @@ JWT_SECRET_KEY=replace-with-strong-random-string
 DATABASE_URL=sqlite:///intellimix.db
 FRONTEND_ORIGIN=http://localhost:5173
 GOOGLE_API_KEY=replace-with-gemini-key
-GEMINI_MODEL_NAME=gemini-2.0-flash
+GEMINI_MODEL_NAME=gemini-3-flash-preview
 GEMINI_MAX_RETRIES=2
 GEMINI_RETRY_BASE_SECONDS=2
+LYRICS_FETCH_TIMEOUT_SECONDS=2.5
+AI_REQUIRE_LLM_TIMESTAMPED_PLAN=false
+TIMESTAMPED_LYRICS_API_URL=https://lrclib.net/api
+TIMESTAMPED_LYRICS_TIMEOUT_SECONDS=6
+AI_TIMESTAMPED_MIN_LINES_PER_SEGMENT=2
+AI_TIMESTAMPED_LYRICS_MAX_LINES_PER_TRACK=120
 JWT_ACCESS_TOKEN_MINUTES=30
 JWT_REFRESH_TOKEN_DAYS=30
 MAX_UPLOAD_SIZE_MB=50
@@ -104,9 +110,16 @@ Required at minimum:
 - `GOOGLE_API_KEY`
 
 Optional:
-- `GEMINI_MODEL_NAME` (default: `gemini-2.0-flash`)
+- `GEMINI_MODEL_NAME` (default: `gemini-3-flash-preview`)
 - `GEMINI_MAX_RETRIES` (default: `2`)
 - `GEMINI_RETRY_BASE_SECONDS` (default: `2`)
+- Single intelligent remix pipeline is used by default (no runtime mixing-mode switch).
+- `LYRICS_FETCH_TIMEOUT_SECONDS` (default: `2.5`)
+- `AI_REQUIRE_LLM_TIMESTAMPED_PLAN` (default: `false`)
+- `TIMESTAMPED_LYRICS_API_URL` (default: `https://lrclib.net/api`)
+- `TIMESTAMPED_LYRICS_TIMEOUT_SECONDS` (default: `6`)
+- `AI_TIMESTAMPED_MIN_LINES_PER_SEGMENT` (default: `2`)
+- `AI_TIMESTAMPED_LYRICS_MAX_LINES_PER_TRACK` (default: `120`)
 
 ### 2. Start full stack
 
