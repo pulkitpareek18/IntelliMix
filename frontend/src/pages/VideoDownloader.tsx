@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Video, Download, Check, AlertCircle, Loader } from 'lucide-react';
-import { ENDPOINTS } from '../utils/api';
+import { ENDPOINTS, apiRequest, getAuthenticatedFileUrl } from '../utils/api';
 
 // Define color palette for the red and yellow theme
 const colors = {
@@ -33,12 +33,6 @@ export default function VideoDownloader() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadType, setDownloadType] = useState<'video' | 'audio'>('video');
 
-  // Modified formats - keep only mp4 for both video and audio
-  const formats = [
-    { type: "MP4", description: "Video", value: "mp4" },
-    { type: "MP4", description: "Audio", value: "mp4-audio" }
-  ];
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -52,31 +46,21 @@ export default function VideoDownloader() {
     setDownloadResult(null);
     
     try {
-      console.log(`Downloading ${url} in ${selectedFormat} format as ${downloadType}`);
-      
       // Choose the appropriate endpoint based on download type
       const endpoint = downloadType === 'video' 
         ? ENDPOINTS.DOWNLOAD_VIDEO 
         : ENDPOINTS.DOWNLOAD_AUDIO;
-      
-      // Make API call to your backend
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          url: url,
-          format: selectedFormat 
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Server responded with status: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      console.log("Download result:", result);
+
+      const result = await apiRequest<{ filepath: string; message: string }>(
+        endpoint,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            url: url,
+            format: selectedFormat
+          }),
+        }
+      );
       
       setDownloadResult({
         filepath: result.filepath,
@@ -100,7 +84,7 @@ export default function VideoDownloader() {
     const startDownload = () => {
       // Create a download link
       const link = document.createElement('a');
-      link.href = downloadResult.filepath;
+      link.href = getAuthenticatedFileUrl(downloadResult.filepath);
       
       // Extract filename from the URL or use a default name
       const filename = downloadResult.filepath.split('/').pop() || `video.${selectedFormat}`;

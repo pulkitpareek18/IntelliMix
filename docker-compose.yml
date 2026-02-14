@@ -1,0 +1,136 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: intellimix-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-intellimix}
+      POSTGRES_USER: ${POSTGRES_USER:-intellimix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-intellimix} -d ${POSTGRES_DB:-intellimix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: intellimix-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: intellimix-backend
+    environment:
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:?FLASK_SECRET_KEY is required}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-intellimix}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/${POSTGRES_DB:-intellimix}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:8080}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_MODEL_NAME: ${GEMINI_MODEL_NAME:-gemini-3-flash-preview}
+      GEMINI_MAX_RETRIES: ${GEMINI_MAX_RETRIES:-2}
+      GEMINI_RETRY_BASE_SECONDS: ${GEMINI_RETRY_BASE_SECONDS:-2}
+      AI_ENABLE_GUIDED_SONG_SUGGESTIONS: ${AI_ENABLE_GUIDED_SONG_SUGGESTIONS:-true}
+      AI_ENABLE_ADAPTIVE_PLANNING_QUESTIONS: ${AI_ENABLE_ADAPTIVE_PLANNING_QUESTIONS:-true}
+      AI_GUIDED_DEFAULT_SONG_SUGGESTION_COUNT: ${AI_GUIDED_DEFAULT_SONG_SUGGESTION_COUNT:-5}
+      AI_GUIDED_RATE_LIMIT_EXTRA_RETRIES: ${AI_GUIDED_RATE_LIMIT_EXTRA_RETRIES:-2}
+      AI_GUIDED_RATE_LIMIT_RETRY_BASE_SECONDS: ${AI_GUIDED_RATE_LIMIT_RETRY_BASE_SECONDS:-4}
+      AI_GUIDED_RATE_LIMIT_RETRY_MAX_SECONDS: ${AI_GUIDED_RATE_LIMIT_RETRY_MAX_SECONDS:-30}
+      AI_USER_MEMORY_ENABLED: ${AI_USER_MEMORY_ENABLED:-true}
+      AI_MEMORY_PROMPT_CONTEXT_ENABLED: ${AI_MEMORY_PROMPT_CONTEXT_ENABLED:-true}
+      AI_MEMORY_USECASE_PROFILES_ENABLED: ${AI_MEMORY_USECASE_PROFILES_ENABLED:-true}
+      AI_MEMORY_TEMPLATE_PACKS_ENABLED: ${AI_MEMORY_TEMPLATE_PACKS_ENABLED:-true}
+      AI_MEMORY_QUALITY_SCORING_ENABLED: ${AI_MEMORY_QUALITY_SCORING_ENABLED:-true}
+      LYRICS_FETCH_TIMEOUT_SECONDS: ${LYRICS_FETCH_TIMEOUT_SECONDS:-2.5}
+      AI_REQUIRE_LLM_TIMESTAMPED_PLAN: ${AI_REQUIRE_LLM_TIMESTAMPED_PLAN:-false}
+      TIMESTAMPED_LYRICS_API_URL: ${TIMESTAMPED_LYRICS_API_URL:-https://lrclib.net/api}
+      TIMESTAMPED_LYRICS_TIMEOUT_SECONDS: ${TIMESTAMPED_LYRICS_TIMEOUT_SECONDS:-6}
+      AI_TIMESTAMPED_MIN_LINES_PER_SEGMENT: ${AI_TIMESTAMPED_MIN_LINES_PER_SEGMENT:-2}
+      AI_TIMESTAMPED_LYRICS_MAX_LINES_PER_TRACK: ${AI_TIMESTAMPED_LYRICS_MAX_LINES_PER_TRACK:-120}
+      JWT_ACCESS_TOKEN_MINUTES: ${JWT_ACCESS_TOKEN_MINUTES:-30}
+      JWT_REFRESH_TOKEN_DAYS: ${JWT_REFRESH_TOKEN_DAYS:-30}
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-100}
+      STORAGE_ROOT: /app/storage
+      PORT: 5000
+      MIX_CHAT_QUEUE_URL: ${MIX_CHAT_QUEUE_URL:-redis://redis:6379/0}
+      MIX_CHAT_QUEUE_KEY: ${MIX_CHAT_QUEUE_KEY:-intellimix:mix_chat_runs}
+      MIX_CHAT_AUTO_RENDER_DEFAULT: ${MIX_CHAT_AUTO_RENDER_DEFAULT:-true}
+      MIX_CHAT_INLINE_FALLBACK: ${MIX_CHAT_INLINE_FALLBACK:-false}
+      MIX_CHAT_POLL_HINT_MS: ${MIX_CHAT_POLL_HINT_MS:-2000}
+    volumes:
+      - backend-storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "${BACKEND_PORT:-5000}:5000"
+    restart: unless-stopped
+
+  backend-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: intellimix-backend-worker
+    command: ["python", "mix_chat_worker.py"]
+    environment:
+      FLASK_SECRET_KEY: ${FLASK_SECRET_KEY:?FLASK_SECRET_KEY is required}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:?JWT_SECRET_KEY is required}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-intellimix}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/${POSTGRES_DB:-intellimix}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:8080}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_MODEL_NAME: ${GEMINI_MODEL_NAME:-gemini-3-flash-preview}
+      GEMINI_MAX_RETRIES: ${GEMINI_MAX_RETRIES:-2}
+      GEMINI_RETRY_BASE_SECONDS: ${GEMINI_RETRY_BASE_SECONDS:-2}
+      AI_ENABLE_GUIDED_SONG_SUGGESTIONS: ${AI_ENABLE_GUIDED_SONG_SUGGESTIONS:-true}
+      AI_ENABLE_ADAPTIVE_PLANNING_QUESTIONS: ${AI_ENABLE_ADAPTIVE_PLANNING_QUESTIONS:-true}
+      AI_GUIDED_DEFAULT_SONG_SUGGESTION_COUNT: ${AI_GUIDED_DEFAULT_SONG_SUGGESTION_COUNT:-5}
+      AI_GUIDED_RATE_LIMIT_EXTRA_RETRIES: ${AI_GUIDED_RATE_LIMIT_EXTRA_RETRIES:-2}
+      AI_GUIDED_RATE_LIMIT_RETRY_BASE_SECONDS: ${AI_GUIDED_RATE_LIMIT_RETRY_BASE_SECONDS:-4}
+      AI_GUIDED_RATE_LIMIT_RETRY_MAX_SECONDS: ${AI_GUIDED_RATE_LIMIT_RETRY_MAX_SECONDS:-30}
+      AI_USER_MEMORY_ENABLED: ${AI_USER_MEMORY_ENABLED:-true}
+      AI_MEMORY_PROMPT_CONTEXT_ENABLED: ${AI_MEMORY_PROMPT_CONTEXT_ENABLED:-true}
+      AI_MEMORY_USECASE_PROFILES_ENABLED: ${AI_MEMORY_USECASE_PROFILES_ENABLED:-true}
+      AI_MEMORY_TEMPLATE_PACKS_ENABLED: ${AI_MEMORY_TEMPLATE_PACKS_ENABLED:-true}
+      AI_MEMORY_QUALITY_SCORING_ENABLED: ${AI_MEMORY_QUALITY_SCORING_ENABLED:-true}
+      STORAGE_ROOT: /app/storage
+      MIX_CHAT_QUEUE_URL: ${MIX_CHAT_QUEUE_URL:-redis://redis:6379/0}
+      MIX_CHAT_QUEUE_KEY: ${MIX_CHAT_QUEUE_KEY:-intellimix:mix_chat_runs}
+      MIX_CHAT_AUTO_RENDER_DEFAULT: ${MIX_CHAT_AUTO_RENDER_DEFAULT:-true}
+      MIX_CHAT_WORKER_POLL_SECONDS: ${MIX_CHAT_WORKER_POLL_SECONDS:-5}
+    volumes:
+      - backend-storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-}
+        VITE_AI_CHAT_UI_ENABLED: ${VITE_AI_CHAT_UI_ENABLED:-true}
+    container_name: intellimix-frontend
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  backend-storage:
+  redis-data:

@@ -1,40 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
-
-// Define color types for better TypeScript support
-interface ColorPalette {
-  brightRed: string;
-  slightlyDarkerRed: string;
-  deepRed: string;
-  reddishOrange: string;
-  vividRed: string;
-  vibrantYellow: string;
-  softYellow: string;
-  paleYellow: string;
-  white: string;
-  black: string;
-  softRed: string;
-  softerRed: string;
-  textDark: string;
-}
-
-// Import colors from a separate file or define them here
-export const colors: ColorPalette = {
-  brightRed: "#f4483a",       // Primary accent
-  slightlyDarkerRed: "#f45444", // Secondary accent
-  deepRed: "#d24d34",         // Emphasis/CTA
-  reddishOrange: "#d14324",   // Highlight
-  vividRed: "#f13521",        // Attention-grabbing
-  vibrantYellow: "#ffb92b",   // Buttons/highlights
-  softYellow: "#f7e5a0",      // Subtle background
-  paleYellow: "#ffe09c",      // Secondary background
-  white: "#FFFFFF",
-  black: "#000000",
-  softRed: "#fee2e1",         // Very light red background
-  softerRed: "#fbeae9",       // Even lighter red for larger areas
-  textDark: "#444444"         // Softer than pure black for text
-};
+import { colors } from '../utils/colors';
 
 interface FeatureCardProps {
   icon: React.ReactNode;
