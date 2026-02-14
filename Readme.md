@@ -1,73 +1,130 @@
-# IntelliMix
+﻿# IntelliMix
 
-IntelliMix is an AI-powered media processing platform for:
-- AI music parody/mashup generation
-- Multi-clip YouTube audio trimming and merging
-- High-quality YouTube video/audio download
+AI-first music mixing studio with a chat-native workflow for planning, revising, and rendering mashups.
 
-This version is production-focused with secure authentication and per-user generation history.
+IntelliMix combines conversational intent understanding, draft-based planning, timeline-aware editing, and asynchronous rendering into a single product experience.
 
-## What Is Now Production-Ready
+## Table of Contents
 
-- JWT-based authentication (`register`, `login`, `refresh`, `logout`, `me`)
-- Password hashing (no plaintext passwords)
-- Database-backed user and generation history persistence
-- User-scoped history APIs (`list`, `view`, `delete`)
-- User-scoped file access (`/files/:jobId/:filename`) requiring valid token
-- Environment-based secrets and runtime config
-- Protected frontend routes for all generation features
-- Dedicated History UI for end users
+- [Why IntelliMix](#why-intellimix)
+- [Core Capabilities](#core-capabilities)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [API Overview](#api-overview)
+- [Realtime Run Updates](#realtime-run-updates)
+- [Project Structure](#project-structure)
+- [Development Workflow](#development-workflow)
+- [Testing](#testing)
+- [Deployment Notes](#deployment-notes)
+- [Security](#security)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Updated Architecture
+## Why IntelliMix
 
-- `frontend`:
-  - React + TypeScript + Vite
-  - Auth context + protected routes
-  - Tool pages wired to authenticated API
-  - History page backed by API data
-- `backend`:
-  - Flask API (`/api/v1/*`)
-  - SQLAlchemy models (`users`, `generation_jobs`, `token_blocklist`)
-  - JWT access/refresh tokens
-  - Existing AI/audio/video processing workflows retained
+Most AI audio tools are either:
+- prompt-only (low control), or
+- DAW-heavy (high control, high complexity).
 
-## Environment Setup
+IntelliMix sits in the middle: conversational UX with explicit, reviewable planning artifacts (drafts, constraints, versions, timeline attachments) before final render.
 
-### Backend (`backend/.env`)
-Copy from `backend/.env.example` and set values:
+## Core Capabilities
 
-```env
-FLASK_SECRET_KEY=replace-with-strong-random-string
-JWT_SECRET_KEY=replace-with-strong-random-string
-DATABASE_URL=sqlite:///intellimix.db
-FRONTEND_ORIGIN=http://localhost:5173
-GOOGLE_API_KEY=replace-with-gemini-key
-GEMINI_MODEL_NAME=gemini-3-flash-preview
-GEMINI_MAX_RETRIES=2
-GEMINI_RETRY_BASE_SECONDS=2
-LYRICS_FETCH_TIMEOUT_SECONDS=2.5
-AI_REQUIRE_LLM_TIMESTAMPED_PLAN=false
-TIMESTAMPED_LYRICS_API_URL=https://lrclib.net/api
-TIMESTAMPED_LYRICS_TIMEOUT_SECONDS=6
-AI_TIMESTAMPED_MIN_LINES_PER_SEGMENT=2
-AI_TIMESTAMPED_LYRICS_MAX_LINES_PER_TRACK=120
-JWT_ACCESS_TOKEN_MINUTES=30
-JWT_REFRESH_TOKEN_DAYS=30
-MAX_UPLOAD_SIZE_MB=50
-STORAGE_ROOT=storage
-PORT=5000
+- Chat-first mix generation with iterative refinement
+- Planning drafts with structured revision loops
+- Timeline attachment + conflict-aware resolution flow
+- Versioned outputs and immutable chat history
+- Personalized suggestions using optional user memory signals
+- Async run processing via queue/worker pattern
+- Realtime run status via SSE, with polling fallback
+- Authenticated user history and secured file retrieval
+
+## Architecture
+
+```mermaid
+flowchart LR
+  U[Web Client\nReact + Vite] -->|REST + SSE| API[Flask API]
+  API --> DB[(PostgreSQL)]
+  API --> R[(Redis Queue)]
+  W[Worker\nmix_chat_worker.py] --> R
+  W --> DB
+  W --> S[(Storage Volume)]
+  API --> S
 ```
 
-### Frontend (`frontend/.env`)
-Copy from `frontend/.env.example`:
+Runtime responsibilities:
+- `app.py`: API surface, auth, run orchestration entry points, SSE endpoints
+- `mix_chat_runner.py`: planning/refinement/render orchestration logic
+- `mix_chat_queue.py`: queue abstraction over Redis
+- `mix_chat_worker.py`: background run executor
 
-```env
-VITE_API_URL=http://127.0.0.1:5000
+## Tech Stack
+
+Frontend:
+- React 18, TypeScript, Vite
+- React Router
+- Tailwind CSS
+- Three.js / React Three Fiber
+
+Backend:
+- Flask, SQLAlchemy, Flask-JWT-Extended
+- Redis (queue)
+- Gunicorn
+- pydub, moviepy, pytubefix
+- Google Gemini (`google-genai`)
+
+Infrastructure:
+- Docker Compose (dev + production-style stacks)
+
+## Getting Started
+
+## Prerequisites
+
+- Docker Desktop (recommended), or
+- Python 3.12+ and Node 20+ for local manual setup
+
+## Option A: Development Stack (Hot Reload)
+
+Use this during feature work.
+
+```bash
+docker compose -f docker-compose.dev.yml --env-file .env.docker up --build
 ```
 
-## Local Development
+Default URLs:
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5001`
 
-### 1. Backend
+Stop:
+
+```bash
+docker compose -f docker-compose.dev.yml --env-file .env.docker down
+```
+
+## Option B: Production-Style Stack
+
+Use this for production-like runtime behavior.
+
+```bash
+docker compose --env-file .env.docker up --build
+```
+
+Default URLs:
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:5000`
+
+Stop:
+
+```bash
+docker compose --env-file .env.docker down
+```
+
+## Option C: Run Without Docker
+
+Backend:
 
 ```bash
 cd backend
@@ -75,9 +132,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-API will run at `http://127.0.0.1:5000`.
-
-### 2. Frontend
+Frontend:
 
 ```bash
 cd frontend
@@ -85,116 +140,199 @@ npm install
 npm run dev
 ```
 
-Frontend will run at `http://localhost:5173`.
+## Configuration
 
-## Docker Deployment
-
-The repository now includes:
-- `backend/Dockerfile`
-- `frontend/Dockerfile`
-- `frontend/nginx.conf` (SPA hosting + `/api` and `/files` reverse proxy)
-- `docker-compose.yml` (frontend + backend + postgres)
-
-### 1. Create Docker env file
-
-Copy `.env.docker.example` to `.env.docker` and set secrets:
+Start from `.env.docker.example`:
 
 ```bash
 cp .env.docker.example .env.docker
 ```
 
-Required at minimum:
+Required (production-style compose):
 - `POSTGRES_PASSWORD`
 - `FLASK_SECRET_KEY`
 - `JWT_SECRET_KEY`
 - `GOOGLE_API_KEY`
 
-Optional:
-- `GEMINI_MODEL_NAME` (default: `gemini-3-flash-preview`)
-- `GEMINI_MAX_RETRIES` (default: `2`)
-- `GEMINI_RETRY_BASE_SECONDS` (default: `2`)
-- Single intelligent remix pipeline is used by default (no runtime mixing-mode switch).
-- `LYRICS_FETCH_TIMEOUT_SECONDS` (default: `2.5`)
-- `AI_REQUIRE_LLM_TIMESTAMPED_PLAN` (default: `false`)
-- `TIMESTAMPED_LYRICS_API_URL` (default: `https://lrclib.net/api`)
-- `TIMESTAMPED_LYRICS_TIMEOUT_SECONDS` (default: `6`)
-- `AI_TIMESTAMPED_MIN_LINES_PER_SEGMENT` (default: `2`)
-- `AI_TIMESTAMPED_LYRICS_MAX_LINES_PER_TRACK` (default: `120`)
+High-impact configuration knobs:
 
-### 2. Start full stack
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | Primary database connection |
+| `FRONTEND_ORIGIN` | CORS allowlist origin |
+| `MIX_CHAT_QUEUE_URL` | Redis connection for queue |
+| `MIX_CHAT_QUEUE_KEY` | Queue key for run IDs |
+| `MIX_CHAT_WORKER_POLL_SECONDS` | Worker dequeue poll interval |
+| `MIX_CHAT_SSE_POLL_SECONDS` | SSE refresh cadence |
+| `MIX_CHAT_SSE_HEARTBEAT_SECONDS` | SSE keepalive interval |
+| `MIX_CHAT_SSE_MAX_SECONDS` | SSE stream max duration |
+| `VITE_MIX_CHAT_SSE_ENABLED` | Enables client SSE subscription |
+| `AI_ENABLE_GUIDED_SONG_SUGGESTIONS` | AI-guided song suggestion mode |
+| `AI_ENABLE_ADAPTIVE_PLANNING_QUESTIONS` | Dynamic planning-question generation |
+| `AI_USER_MEMORY_ENABLED` | Memory-driven personalization controls |
 
-```bash
-docker compose --env-file .env.docker up --build
+For backend-only local setup, refer to `backend/.env.example`.
+
+## API Overview
+
+Base path: `/api/v1`
+
+Auth:
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/refresh`
+- `POST /auth/logout`
+- `GET /auth/me`
+
+Mix sessions (legacy + utility):
+- `POST /mix-sessions/plan`
+- `GET /mix-sessions`
+- `GET /mix-sessions/<session_id>`
+- `POST /mix-sessions/<session_id>/finalize`
+
+Mix chats (primary workflow):
+- `POST /mix-chats`
+- `GET /mix-chats`
+- `DELETE /mix-chats/<thread_id>`
+- `GET /mix-chats/<thread_id>/messages`
+- `POST /mix-chats/<thread_id>/messages`
+- `GET /mix-chats/<thread_id>/versions`
+- `POST /mix-chats/<thread_id>/versions/<version_id>/render`
+- `POST /mix-chats/<thread_id>/versions/<version_id>/edit-runs`
+- `GET /mix-chats/<thread_id>/plan-drafts/<draft_id>`
+
+Run status:
+- `GET /mix-chat-runs/<run_id>`
+- `GET /mix-chat-runs/<run_id>/events` (SSE)
+
+History + files:
+- `GET /history`
+- `GET /history/<job_id>`
+- `DELETE /history/<job_id>`
+- `GET /files/<job_id>/<filename>`
+
+Additional processing endpoints (supported):
+- `POST /process-array`
+- `POST /process-csv`
+- `POST /generate-ai`
+- `POST /download-video`
+- `POST /download-audio`
+
+## Realtime Run Updates
+
+IntelliMix uses a dual strategy:
+- Primary: Server-Sent Events (SSE) stream per run (`/events`)
+- Fallback: polling snapshots when SSE is disabled/unavailable
+
+Client states exposed in UI:
+- `queued`
+- `running`
+- `completed`
+- `failed`
+
+## Project Structure
+
+```text
+backend/
+  ai/                     # AI instructions, model client logic, planning helpers
+  features/               # media processing helpers
+  tests/                  # backend test suite
+  app.py                  # Flask app and routes
+  mix_chat_runner.py      # run orchestration (planning/revision/render)
+  mix_chat_queue.py       # Redis queue interface
+  mix_chat_worker.py      # worker loop
+
+frontend/
+  src/pages/              # route screens (AIParody, auth, history, tools)
+  src/components/         # UI components
+  src/context/            # auth context and hooks
+  src/utils/              # API and shared utilities
+
+infra/
+  docker-compose.yml      # production-style stack
+  docker-compose.dev.yml  # hot-reload dev stack
 ```
 
-### 3. Access services
+## Development Workflow
 
-- Frontend: `http://localhost:8080`
-- Backend API (direct): `http://localhost:5000`
-
-### 4. Stop stack
+Frontend:
 
 ```bash
-docker compose --env-file .env.docker down
+cd frontend
+npm run lint
+npm run build
 ```
 
-Persisted volumes:
-- `postgres-data`
-- `backend-storage`
-
-## Docker Dev (Hot Reload)
-
-Use the dedicated dev compose file for live updates:
-- `docker-compose.dev.yml`
-- `backend/Dockerfile.dev` (Flask debug server with reload)
-- `frontend/Dockerfile.dev` (Vite dev server with HMR)
-
-Start dev stack:
-
-```bash
-docker compose -f docker-compose.dev.yml --env-file .env.docker up --build
-```
-
-Dev URLs:
-- Frontend (HMR): `http://localhost:5173`
-- Backend API: `http://localhost:5001`
-
-Stop dev stack:
-
-```bash
-docker compose -f docker-compose.dev.yml --env-file .env.docker down
-```
-
-## Key API Routes
-
-- `POST /api/v1/auth/register`
-- `POST /api/v1/auth/login`
-- `POST /api/v1/auth/refresh`
-- `POST /api/v1/auth/logout`
-- `GET /api/v1/auth/me`
-- `GET /api/v1/history`
-- `GET /api/v1/history/:jobId`
-- `DELETE /api/v1/history/:jobId`
-- `POST /api/v1/generate-ai`
-- `POST /api/v1/process-array`
-- `POST /api/v1/process-csv`
-- `POST /api/v1/download-video`
-- `POST /api/v1/download-audio`
-- `GET /files/:jobId/:filename`
-
-## Testing
-
-Backend tests (auth + history behavior):
+Backend (local):
 
 ```bash
 cd backend
-pytest -q
+pytest -q tests
 ```
 
-## Production Notes
+Backend (containerized, recommended in this repo):
 
-- Replace SQLite with managed Postgres via `DATABASE_URL`
-- Use HTTPS in production and secure secret management
-- Move generated media from local disk to object storage (S3/GCS) for horizontal scaling
-- Add worker queues for long-running jobs (Celery/RQ)
-- Add rate limiting and audit logging at gateway layer
+```bash
+docker compose -f docker-compose.dev.yml --env-file .env.docker run --rm -e PYTHONPATH=/app backend pytest -q tests
+```
+
+## Testing
+
+Current backend suite includes coverage for:
+- auth and history behavior
+- mix chat API behavior
+- song suggestion and timeline resolution logic
+- AI and selection helper pathways
+
+Run all tests:
+
+```bash
+docker compose -f docker-compose.dev.yml --env-file .env.docker run --rm -e PYTHONPATH=/app backend pytest -q tests
+```
+
+## Deployment Notes
+
+- Production compose is configured to fail fast when required secrets are missing.
+- Use managed Postgres/Redis and persistent storage in production.
+- Keep worker and API scaled independently.
+- Store generated media in object storage for multi-instance horizontal scale.
+- Monitor AI provider quota/rate limits for stable planning UX.
+
+## Security
+
+- Never commit secret `.env` files.
+- Rotate `FLASK_SECRET_KEY`, `JWT_SECRET_KEY`, and provider API keys regularly.
+- Restrict `FRONTEND_ORIGIN` to your trusted domain(s).
+- Terminate TLS at your ingress/reverse proxy.
+- Keep dependency versions patched and run periodic scans.
+
+## Troubleshooting
+
+`AI_RATE_LIMITED` / `AI_TEMPORARILY_UNAVAILABLE`:
+- Check API key quota/billing
+- Tune retry envs: `GEMINI_MAX_RETRIES`, `GEMINI_RETRY_BASE_SECONDS`, `AI_GUIDED_RATE_LIMIT_*`
+
+Runs remain queued:
+- Verify Redis health
+- Verify worker process/container is running
+- Confirm queue URL/key match between API and worker
+
+SSE progress not updating:
+- Ensure `VITE_MIX_CHAT_SSE_ENABLED=true`
+- Validate proxy/network path for `/api/v1/mix-chat-runs/<run_id>/events`
+
+Frequent auth `401`:
+- Check token refresh flow
+- Verify backend clock and JWT expiry settings
+
+## Contributing
+
+1. Create a feature branch.
+2. Keep pull requests focused and test-backed.
+3. Run lint/build/tests before opening PR.
+4. Document behavior/config changes in the PR description.
+
+## License
+
+A license file is not currently present in this repository.
+Add a `LICENSE` before public/open distribution.
