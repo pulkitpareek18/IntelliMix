@@ -12,6 +12,10 @@
 - Live app: https://intellimix.geturstyle.in
 - CI checks: Python dependency/syntax checks + frontend build
 
+## Demo Card
+
+[![IntelliMix Demo Card](https://opengraph.githubassets.com/1/pulkitpareek18/IntelliMix)](https://intellimix.geturstyle.in)
+
 AI-first music mixing studio with a chat-native workflow for planning, revising, and rendering mashups.
 
 IntelliMix combines conversational intent understanding, draft-based planning, timeline-aware editing, and asynchronous rendering into a single product experience.
