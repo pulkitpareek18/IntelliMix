@@ -1,5 +1,17 @@
 ﻿# IntelliMix
 
+[![CI](https://github.com/pulkitpareek18/IntelliMix/actions/workflows/ci.yml/badge.svg)](https://github.com/pulkitpareek18/IntelliMix/actions/workflows/ci.yml)
+[![Deploy](https://github.com/pulkitpareek18/IntelliMix/actions/workflows/main.yml/badge.svg)](https://github.com/pulkitpareek18/IntelliMix/actions/workflows/main.yml)
+![Last Commit](https://img.shields.io/github/last-commit/pulkitpareek18/IntelliMix)
+![Stars](https://img.shields.io/github/stars/pulkitpareek18/IntelliMix)
+
+## Release Snapshot (March 2026)
+
+- Status: Active
+- Type: AI-first music mixing platform
+- Live app: https://intellimix.geturstyle.in
+- CI checks: Python dependency/syntax checks + frontend build
+
 AI-first music mixing studio with a chat-native workflow for planning, revising, and rendering mashups.
 
 IntelliMix combines conversational intent understanding, draft-based planning, timeline-aware editing, and asynchronous rendering into a single product experience.
